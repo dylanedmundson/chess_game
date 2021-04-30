@@ -20,7 +20,7 @@ public class Pawn extends Entity {
     public void loadImg() {
         try {
             if (color == BLACK) {
-                image = ImageIO.read(new File("res/black_pawn.png"));
+                image= ImageIO.read(new File("res/black_pawn.png"));
             } else {
                 image = ImageIO.read(new File("res/white_pawn.png"));
             }

@@ -19,8 +19,8 @@ public class GameBoard extends JFrame implements ActionListener {
 
     //colors
     private static final Color BACKGROUND = new Color(0, 128, 0, 255);
-    private static final Color BOARD_LIGHT = new Color(244 - 50, 226 - 50, 198 - 50, 255);
-    private static final Color BOARD_DARK = new Color(40, 26, 13, 255);
+    private static final Color BOARD_LIGHT = new Color(207, 185, 125, 255);
+    private static final Color BOARD_DARK = new Color(101, 67, 33, 255);
 
     private BufferedImage image;
     private Graphics dbg;

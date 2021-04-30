@@ -11,7 +11,7 @@ public abstract class Entity {
     protected BufferedImage image;
     protected byte color;
 
-    //TODO: create rest of pieces and overide loadImg()
+    //TODO: create rest of pieces and override loadImg()
 
     public Entity(byte color) {
         if (color != BLACK && color != WHITE) {
@@ -37,9 +37,7 @@ public abstract class Entity {
         return isAlive;
     }
 
-    public BufferedImage getImage() {
-        return image;
-    }
+    public BufferedImage getImage() { return image; }
 
     public abstract void move();
     public abstract void loadImg() throws IOException;
