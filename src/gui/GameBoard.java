@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 public class GameBoard extends JFrame implements ActionListener {
+    public static final int ANIMATION_DELAY = 10;
     private static final String TITLE = "Chess v.1.0";
     public static final int WIDTH = 900;
     public static final int HEIGHT = 900;
@@ -16,6 +17,7 @@ public class GameBoard extends JFrame implements ActionListener {
     public static final int BOARD_WIDTH = 800;
     public static final int BOARD_HEIGHT = 800;
     public static final int SQUARE_SIZE = 100;
+    public static final InputAdapater INPUT_ADAPATER = new InputAdapater();
 
     //colors
     private static final Color BACKGROUND = new Color(0, 128, 0, 255);
@@ -25,6 +27,7 @@ public class GameBoard extends JFrame implements ActionListener {
     private BufferedImage image;
     private Graphics dbg;
     private GameBoardManager gameBoardManager;
+    private Timer timer;
 
     public GameBoard() {
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -40,6 +43,10 @@ public class GameBoard extends JFrame implements ActionListener {
         setVisible(true);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        timer = new Timer(ANIMATION_DELAY, this);
+        timer.start();
+        addMouseListener(INPUT_ADAPATER);
     }
 
     @Override
@@ -79,8 +86,10 @@ public class GameBoard extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        paintComponents(dbg);
+        gameBoardManager.tick();
     }
+
 
     public static void main(String[] args) {
         new GameBoard().init();
