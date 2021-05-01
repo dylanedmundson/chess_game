@@ -1,5 +1,7 @@
 package entities;
 
+import gui.InputAdapater;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -10,6 +12,8 @@ public abstract class Entity {
     protected boolean isAlive;
     protected BufferedImage image;
     protected byte color;
+    protected int row;
+    protected int col;
 
     //TODO: create rest of pieces and override loadImg()
 
@@ -19,11 +23,9 @@ public abstract class Entity {
         }
         isAlive = true;
         this.color = color;
-        try {
-            loadImg();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.row = row;
+        this.col = col;
+        loadImg();
     }
 
     public void collision(Entity other) {
@@ -39,6 +41,9 @@ public abstract class Entity {
 
     public BufferedImage getImage() { return image; }
 
+    /**
+     * cartesian coordinate system, up is -y down is +y left -x right +x, move one space = 1
+     */
     public abstract void move();
-    public abstract void loadImg() throws IOException;
+    public abstract void loadImg();
 }
