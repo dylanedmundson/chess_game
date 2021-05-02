@@ -1,8 +1,11 @@
 package entities;
 
+import utils.RowColCoord;
+
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class Bishop extends Entity{
     public Bishop(byte color) {
@@ -10,9 +13,10 @@ public class Bishop extends Entity{
     }
 
     @Override
-    public void move() {
-
+    public LinkedList<RowColCoord> move(RowColCoord curCoord) {
+        return null;
     }
+
 
     @Override
     public void loadImg(){

@@ -1,12 +1,14 @@
 package gui;
 
 import com.sun.corba.se.spi.orbutil.fsm.Input;
+import utils.GameBoardManager;
 
 import javax.swing.event.MouseInputListener;
 import java.awt.event.MouseEvent;
 
 public class InputAdapater implements MouseInputListener {
     public MouseClickHelper mouseClickHelper;
+    private GameBoardManager gm;
 
     public class MouseClickHelper {
         private int x;
@@ -26,8 +28,9 @@ public class InputAdapater implements MouseInputListener {
         }
     }
 
-    public InputAdapater() {
+    public InputAdapater(GameBoardManager gm) {
         mouseClickHelper = new MouseClickHelper();
+        this.gm = gm;
     }
 
     @Override
@@ -41,6 +44,7 @@ public class InputAdapater implements MouseInputListener {
         mouseClickHelper.x = x;
         mouseClickHelper.y = y;
         mouseClickHelper.isPressed = true;
+        gm.press(x, y);
     }
 
     @Override
@@ -50,6 +54,7 @@ public class InputAdapater implements MouseInputListener {
         mouseClickHelper.x = x;
         mouseClickHelper.y = y;
         mouseClickHelper.isPressed = false;
+        gm.release();
     }
 
     @Override

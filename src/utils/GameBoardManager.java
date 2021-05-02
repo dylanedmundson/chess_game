@@ -2,16 +2,25 @@ package utils;
 
 import entities.*;
 import gui.GameBoard;
-import gui.InputAdapater;
+import sun.awt.image.ImageWatched;
 
 import java.awt.*;
+import java.util.LinkedList;
 
 public class GameBoardManager {
-    private static final int BOARD_WIDTH = 8;
-    private static final int BOARD_HEIGHT = 8;
+    public static final int BOARD_WIDTH = 8;
+    public static final int BOARD_HEIGHT = 8;
+    private static final Color HIGHLIGHT = new Color(255, 0, 0, 100);
+    private static final int DEBOUNCE_CLICK = 200;
 
     private Entity[][] elements;
-    private InputAdapater.MouseClickHelper mouseClickHelper = GameBoard.INPUT_ADAPATER.mouseClickHelper;
+    private boolean[][] isHighlighted = new boolean[BOARD_WIDTH][BOARD_HEIGHT];
+    private boolean isClicked = false;
+    private int xClick;
+    private int yClick;
+    private RowColCoord lasClickCoord;
+    private LinkedList<RowColCoord> lastMoves;
+    private long lastClickTime;
 
     public GameBoardManager() {
 
@@ -20,6 +29,9 @@ public class GameBoardManager {
         elements[1] = initPawnRow(Entity.BLACK);
         elements[6] = initPawnRow(Entity.WHITE);
         elements[7] = initRoyalty(Entity.WHITE);
+
+        lastClickTime = System.currentTimeMillis();
+
     }
 
     private Entity[] initRoyalty(byte color) {
@@ -54,20 +66,52 @@ public class GameBoardManager {
                             ((GameBoard.SQUARE_SIZE - elements[row][col].getImage().getHeight()) / 2);
                     g.drawImage(elements[row][col].getImage(), x, y, null);
                 }
+                if (isHighlighted[row][col]) {
+                    int x = col * GameBoard.SQUARE_SIZE + GameBoard.BOARD_START;
+                    int y = row * GameBoard.SQUARE_SIZE + GameBoard.BOARD_START;
+                    g.setColor(HIGHLIGHT);
+                    g.fillRect(x, y, GameBoard.SQUARE_SIZE, GameBoard.SQUARE_SIZE);
+                }
             }
         }
     }
 
     public void tick() {
-        if (mouseClickHelper.isPressed()) {
-            int x = mouseClickHelper.getX();
-            int y = mouseClickHelper.getY();
-            System.out.println("pressed");
+        if (isClicked) {
+            long nextClickTime = System.currentTimeMillis();
+            if (nextClickTime - lastClickTime > DEBOUNCE_CLICK) {
+                lastClickTime = nextClickTime;
+                RowColCoord rowColCoord = CoordinateConverter.getPoint(this.xClick, this.yClick);
+                if (lasClickCoord != null) {
+                    if (!lasClickCoord.equals(rowColCoord)) {
+                        for (RowColCoord rc : lastMoves) {
+                            isHighlighted[rc.row][rc.col] = false;
+                        }
+                    }
+                }
+                if (rowColCoord != null) {
+                    LinkedList<RowColCoord> moves = elements[rowColCoord.row][rowColCoord.col].move(rowColCoord);
+                    if (moves == null) {
+                        moves = new LinkedList<>();
+                    }
+                    moves.add(rowColCoord);
+                    for (RowColCoord rc : moves) {
+                        isHighlighted[rc.row][rc.col] = !isHighlighted[rowColCoord.row][rowColCoord.col];
+                    }
+                    lastMoves = moves;
+                }
+                lasClickCoord = rowColCoord;
+            }
         }
-        if (!mouseClickHelper.isPressed()) {
-            int x = mouseClickHelper.getX();
-            int y = mouseClickHelper.getY();
-            System.out.println("released");
-        }
+    }
+
+    public void press(int x, int y) {
+        isClicked = true;
+        xClick = x;
+        yClick = y;
+    }
+
+    public void release() {
+        isClicked = false;
     }
 }
