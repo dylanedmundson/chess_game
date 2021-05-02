@@ -1,9 +1,11 @@
 package entities;
 
 import gui.InputAdapater;
+import utils.RowColCoord;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.LinkedList;
 
 public abstract class Entity {
     public static final byte BLACK = 0x0000;
@@ -23,8 +25,6 @@ public abstract class Entity {
         }
         isAlive = true;
         this.color = color;
-        this.row = row;
-        this.col = col;
         loadImg();
     }
 
@@ -44,6 +44,6 @@ public abstract class Entity {
     /**
      * cartesian coordinate system, up is -y down is +y left -x right +x, move one space = 1
      */
-    public abstract void move();
+    public abstract LinkedList<RowColCoord> move(RowColCoord curCoord);
     public abstract void loadImg();
 }

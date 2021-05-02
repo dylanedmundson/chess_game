@@ -1,8 +1,11 @@
 package entities;
 
+import utils.RowColCoord;
+
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class Rook extends Entity{
     public Rook(byte color) {
@@ -10,8 +13,8 @@ public class Rook extends Entity{
     }
 
     @Override
-    public void move() {
-
+    public LinkedList<RowColCoord> move(RowColCoord curCoord) {
+        return null;
     }
 
     @Override
