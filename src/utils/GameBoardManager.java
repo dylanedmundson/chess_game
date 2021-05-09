@@ -2,7 +2,6 @@ package utils;
 
 import entities.*;
 import gui.GameBoard;
-import sun.awt.image.ImageWatched;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -36,14 +35,14 @@ public class GameBoardManager {
 
     private Entity[] initRoyalty(byte color) {
         Entity[] royalty = new Entity[] {
-                new Rook(color),
-                new Knight(color),
-                new Bishop(color),
-                new Queen(color),
-                new King(color),
-                new Bishop(color),
-                new Knight(color),
-                new Rook(color)
+                new Rook(color, this),
+                new Knight(color, this),
+                new Bishop(color, this),
+                new Queen(color, this),
+                new King(color, this),
+                new Bishop(color, this),
+                new Knight(color, this),
+                new Rook(color, this)
         };
         return royalty;
     }
@@ -51,7 +50,7 @@ public class GameBoardManager {
     private Entity[] initPawnRow(byte color) {
         Entity[] pawns = new Entity[BOARD_WIDTH];
         for (int i = 0; i < 8; i++) {
-            pawns[i] = new Pawn(color);
+            pawns[i] = new Pawn(color, this);
         }
         return pawns;
     }
@@ -76,31 +75,54 @@ public class GameBoardManager {
         }
     }
 
+    private boolean lastMovesContains(RowColCoord coord) {
+        for(RowColCoord rc : lastMoves) {
+            if (rc.equals(coord)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //TODO:fix bug with clicking king and having him move without having to click and highlight first
+    //TODO: fix null pointer exception when king is on edge of map and click off board
     public void tick() {
         if (isClicked) {
             long nextClickTime = System.currentTimeMillis();
             if (nextClickTime - lastClickTime > DEBOUNCE_CLICK) {
                 lastClickTime = nextClickTime;
                 RowColCoord rowColCoord = CoordinateConverter.getPoint(this.xClick, this.yClick);
-                if (lasClickCoord != null) {
-                    if (!lasClickCoord.equals(rowColCoord)) {
-                        for (RowColCoord rc : lastMoves) {
-                            isHighlighted[rc.row][rc.col] = false;
+                if (lastMoves != null && lastMovesContains(rowColCoord) && !lasClickCoord.equals(rowColCoord)) {
+                    elements[rowColCoord.row][rowColCoord.col] = elements[lasClickCoord.row][lasClickCoord.col];
+                    elements[lasClickCoord.row][lasClickCoord.col] = null;
+                    elements[rowColCoord.row][rowColCoord.col].move();
+                    lasClickCoord = rowColCoord;
+                    for (RowColCoord rc : lastMoves) {
+                        isHighlighted[rc.row][rc.col] = false;
+                    }
+                    return;
+                }
+                if (elements[rowColCoord.row][rowColCoord.col] != null) {
+                    if (lasClickCoord != null) {
+                        if (!lasClickCoord.equals(rowColCoord)) {
+                            for (RowColCoord rc : lastMoves) {
+                                isHighlighted[rc.row][rc.col] = false;
+                            }
                         }
                     }
-                }
-                if (rowColCoord != null) {
-                    LinkedList<RowColCoord> moves = elements[rowColCoord.row][rowColCoord.col].move(rowColCoord);
-                    if (moves == null) {
-                        moves = new LinkedList<>();
+                    if (rowColCoord != null) {
+                        LinkedList<RowColCoord> moves = elements[rowColCoord.row][rowColCoord.col].getPotMoves(rowColCoord);
+                        if (moves == null) {
+                            moves = new LinkedList<>();
+                        }
+                        moves.add(rowColCoord);
+                        for (RowColCoord rc : moves) {
+                            isHighlighted[rc.row][rc.col] = true;
+                        }
+                        lastMoves = moves;
                     }
-                    moves.add(rowColCoord);
-                    for (RowColCoord rc : moves) {
-                        isHighlighted[rc.row][rc.col] = !isHighlighted[rowColCoord.row][rowColCoord.col];
-                    }
-                    lastMoves = moves;
+                    lasClickCoord = rowColCoord;
                 }
-                lasClickCoord = rowColCoord;
             }
         }
     }
@@ -113,5 +135,9 @@ public class GameBoardManager {
 
     public void release() {
         isClicked = false;
+    }
+
+    public Entity getEntityAt(int row, int col) {
+        return elements[row][col];
     }
 }
