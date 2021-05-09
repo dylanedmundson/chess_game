@@ -1,5 +1,6 @@
 package entities;
 
+import utils.GameBoardManager;
 import utils.RowColCoord;
 
 import javax.imageio.ImageIO;
@@ -8,13 +9,18 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 public class Knight extends Entity{
-    public Knight(byte color) {
-        super(color);
+    public Knight(byte color, GameBoardManager gbm) {
+        super(color, gbm);
     }
 
     @Override
-    public LinkedList<RowColCoord> move(RowColCoord curCoord) {
+    public LinkedList<RowColCoord> getPotMoves(RowColCoord curCoord) {
         return null;
+    }
+
+    @Override
+    public void move() {
+
     }
 
     @Override
