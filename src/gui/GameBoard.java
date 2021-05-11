@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
+//TODO: add save button
 public class GameBoard extends JPanel implements ActionListener {
     public static final int ANIMATION_DELAY = 10;
     private static final String TITLE = "Chess v.1.0";
@@ -60,6 +61,8 @@ public class GameBoard extends JPanel implements ActionListener {
         //draw background color
         g.setColor(BACKGROUND);
         g.fillRect(0, 0, getWidth(), getHeight());
+        //TODO: add labels for rows and columns
+        //TODO: add labels for turn instructions
 
         //draw board
         int counter = 0;
