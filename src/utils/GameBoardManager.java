@@ -102,7 +102,7 @@ public class GameBoardManager {
                     }
                     return;
                 }
-                if (elements[rowColCoord.row][rowColCoord.col] != null) {
+                if (rowColCoord != null && elements[rowColCoord.row][rowColCoord.col] != null) {
                     if (lasClickCoord != null) {
                         if (!lasClickCoord.equals(rowColCoord)) {
                             for (RowColCoord rc : lastMoves) {
@@ -138,6 +138,10 @@ public class GameBoardManager {
     }
 
     public Entity getEntityAt(int row, int col) {
-        return elements[row][col];
+        if (row < 0 || row >= GameBoardManager.BOARD_HEIGHT || col < 0 || col >= GameBoardManager.BOARD_WIDTH) {
+            return null;
+        } else {
+            return elements[row][col];
+        }
     }
 }
