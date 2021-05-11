@@ -6,6 +6,8 @@ import gui.GameBoard;
 import java.awt.*;
 import java.util.LinkedList;
 
+//TODO: implement turn base
+//TODO: save game state
 public class GameBoardManager {
     public static final int BOARD_WIDTH = 8;
     public static final int BOARD_HEIGHT = 8;
@@ -84,8 +86,6 @@ public class GameBoardManager {
         return false;
     }
 
-    //TODO:fix bug with clicking king and having him move without having to click and highlight first
-    //TODO: fix null pointer exception when king is on edge of map and click off board
     public void tick() {
         if (isClicked) {
             long nextClickTime = System.currentTimeMillis();
@@ -102,7 +102,7 @@ public class GameBoardManager {
                     }
                     return;
                 }
-                if (elements[rowColCoord.row][rowColCoord.col] != null) {
+                if (rowColCoord != null && elements[rowColCoord.row][rowColCoord.col] != null) {
                     if (lasClickCoord != null) {
                         if (!lasClickCoord.equals(rowColCoord)) {
                             for (RowColCoord rc : lastMoves) {
@@ -138,6 +138,10 @@ public class GameBoardManager {
     }
 
     public Entity getEntityAt(int row, int col) {
-        return elements[row][col];
+        if (row < 0 || row >= GameBoardManager.BOARD_HEIGHT || col < 0 || col >= GameBoardManager.BOARD_WIDTH) {
+            return null;
+        } else {
+            return elements[row][col];
+        }
     }
 }

@@ -1,13 +1,7 @@
 package utils;
 
-import java.awt.*;
-
 import static gui.GameBoard.*;
 
-/**
- * TODO: converts cartesian coordinates on the gameboard to a board row and board collumn
- * TODO: converts row and column to top left corner of square (cartesian) centered based off of image
- */
 
 public class CoordinateConverter {
     public static RowColCoord getPoint(int x, int y) {

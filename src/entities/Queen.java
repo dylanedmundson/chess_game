@@ -15,7 +15,16 @@ public class Queen extends Entity{
 
     @Override
     public LinkedList<RowColCoord> getPotMoves(RowColCoord curCoord) {
-        return null;
+        LinkedList<RowColCoord> moves = new LinkedList<>();
+        addMovesHelper(moves, curCoord, UP);
+        addMovesHelper(moves, curCoord, DOWN);
+        addMovesHelper(moves, curCoord, LEFT);
+        addMovesHelper(moves, curCoord, RIGHT);
+        addMovesHelper(moves, curCoord, UP_LEFT);
+        addMovesHelper(moves, curCoord, UP_RIGHT);
+        addMovesHelper(moves, curCoord, DOWN_LEFT);
+        addMovesHelper(moves, curCoord, DOWN_RIGHT);
+        return moves;
     }
 
     @Override

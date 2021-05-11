@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import static utils.GameBoardManager.BOARD_HEIGHT;
+import static utils.GameBoardManager.BOARD_WIDTH;
+
 public class Rook extends Entity{
     public Rook(byte color, GameBoardManager gbm) {
         super(color, gbm);
@@ -15,7 +18,12 @@ public class Rook extends Entity{
 
     @Override
     public LinkedList<RowColCoord> getPotMoves(RowColCoord curCoord) {
-        return null;
+        LinkedList<RowColCoord> moves = new LinkedList<>();
+        addMovesHelper(moves, curCoord, UP);
+        addMovesHelper(moves, curCoord, DOWN);
+        addMovesHelper(moves, curCoord, LEFT);
+        addMovesHelper(moves, curCoord, RIGHT);
+        return moves;
     }
 
     @Override
