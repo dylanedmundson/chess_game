@@ -3,6 +3,7 @@ package entities;
 import utils.GameBoardManager;
 import utils.RowColCoord;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
@@ -49,6 +50,10 @@ public abstract class Entity {
     }
 
     public BufferedImage getImage() { return image; }
+
+    public byte getColor() {
+        return this.color;
+    }
 
     /**
      * cartesian coordinate system, up is -y down is +y left -x right +x, move one space = 1
