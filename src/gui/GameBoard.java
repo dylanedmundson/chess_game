@@ -11,18 +11,18 @@ import java.awt.image.BufferedImage;
 //TODO: add save button
 public class GameBoard extends JPanel implements ActionListener {
     public static final int ANIMATION_DELAY = 10;
-    private static final String TITLE = "Chess v.1.0";
-    public static final int WIDTH = 900;
-    public static final int HEIGHT = 900;
-    public static final int BOARD_START = 50;
+    private final String TITLE = "Chess v.1.0";
+    public static final int WIDTH = 1400;
+    public static final int HEIGHT = 1000;
+    public static final int BOARD_START = 100;
     public static final int BOARD_WIDTH = 800;
     public static final int BOARD_HEIGHT = 800;
     public static final int SQUARE_SIZE = 100;
 
     //colors
-    private static final Color BACKGROUND = new Color(0, 128, 0, 255);
-    private static final Color BOARD_LIGHT = new Color(207, 185, 125, 255);
-    private static final Color BOARD_DARK = new Color(101, 67, 33, 255);
+    public static final Color BACKGROUND = new Color(0, 128, 0, 255);
+    private final Color BOARD_LIGHT = new Color(207, 185, 125, 255);
+    private final Color BOARD_DARK = new Color(101, 67, 33, 255);
 
     private BufferedImage image;
     private Graphics dbg;
@@ -30,6 +30,7 @@ public class GameBoard extends JPanel implements ActionListener {
     private Timer timer;
     public InputAdapater inputAdapter;
     private JFrame frame;
+    private JPanel tools;
 
     public GameBoard() {
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -40,6 +41,7 @@ public class GameBoard extends JPanel implements ActionListener {
 
     public void init() {
         frame = new JFrame();
+        frame.setLayout(new BorderLayout());
         frame.setTitle(TITLE);
         frame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         frame.setMinimumSize(new Dimension(WIDTH, HEIGHT));
@@ -47,6 +49,9 @@ public class GameBoard extends JPanel implements ActionListener {
         frame.setVisible(true);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        tools = new ToolPanel();
+        add(tools, BorderLayout.NORTH);
 
         timer = new Timer(ANIMATION_DELAY, this);
         timer.start();
@@ -56,11 +61,10 @@ public class GameBoard extends JPanel implements ActionListener {
 
     @Override
     public void paintComponents(Graphics g) {
-        super.paintComponents(g);
-
         //draw background color
         g.setColor(BACKGROUND);
         g.fillRect(0, 0, getWidth(), getHeight());
+        super.paintComponents(g);
         //TODO: add labels for rows and columns
         //TODO: add labels for turn instructions
 
