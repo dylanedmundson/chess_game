@@ -6,13 +6,15 @@ import gui.GameBoard;
 import java.awt.*;
 import java.util.LinkedList;
 
-//TODO: implement turn base
 //TODO: save game state
+//TODO: add sorting algorithm for sorting pieces taken on side
 public class GameBoardManager {
     public static final int BOARD_WIDTH = 8;
     public static final int BOARD_HEIGHT = 8;
     private static final Color HIGHLIGHT = new Color(255, 0, 0, 100);
     private static final int DEBOUNCE_CLICK = 200;
+    private static final byte PLAYER1 = 0x0000;
+    private static final byte PLAYER2 = 0x0001;
 
     private Entity[][] elements;
     private boolean[][] isHighlighted = new boolean[BOARD_WIDTH][BOARD_HEIGHT];
@@ -22,6 +24,7 @@ public class GameBoardManager {
     private RowColCoord lasClickCoord;
     private LinkedList<RowColCoord> lastMoves;
     private long lastClickTime;
+    private byte playersTurn;
 
     public GameBoardManager() {
 
@@ -32,6 +35,7 @@ public class GameBoardManager {
         elements[7] = initRoyalty(Entity.WHITE);
 
         lastClickTime = System.currentTimeMillis();
+        playersTurn = PLAYER1;
 
     }
 
@@ -87,11 +91,27 @@ public class GameBoardManager {
     }
 
     public void tick() {
+
+        if (handleClick()) {
+            switchPlayer();
+        }
+    }
+
+    private void switchPlayer() {
+        if (playersTurn == PLAYER1) {
+            playersTurn = PLAYER2;
+        } else {
+            playersTurn = PLAYER1;
+        }
+    }
+
+    private boolean handleClick() {
         if (isClicked) {
             long nextClickTime = System.currentTimeMillis();
             if (nextClickTime - lastClickTime > DEBOUNCE_CLICK) {
                 lastClickTime = nextClickTime;
                 RowColCoord rowColCoord = CoordinateConverter.getPoint(this.xClick, this.yClick);
+                //click for making move
                 if (lastMoves != null && lastMovesContains(rowColCoord) && !lasClickCoord.equals(rowColCoord)) {
                     elements[rowColCoord.row][rowColCoord.col] = elements[lasClickCoord.row][lasClickCoord.col];
                     elements[lasClickCoord.row][lasClickCoord.col] = null;
@@ -100,9 +120,11 @@ public class GameBoardManager {
                     for (RowColCoord rc : lastMoves) {
                         isHighlighted[rc.row][rc.col] = false;
                     }
-                    return;
+                    return true;
                 }
-                if (rowColCoord != null && elements[rowColCoord.row][rowColCoord.col] != null) {
+                //click for highlighting possible moves
+                if (rowColCoord != null && elements[rowColCoord.row][rowColCoord.col] != null &&
+                        isPlayerPiece(rowColCoord)) {
                     if (lasClickCoord != null) {
                         if (!lasClickCoord.equals(rowColCoord)) {
                             for (RowColCoord rc : lastMoves) {
@@ -124,6 +146,15 @@ public class GameBoardManager {
                     lasClickCoord = rowColCoord;
                 }
             }
+        }
+        return false;
+    }
+
+    private boolean isPlayerPiece(RowColCoord rowColCoord) {
+        if (playersTurn == PLAYER1) {
+            return elements[rowColCoord.row][rowColCoord.col].getColor() == Entity.WHITE;
+        } else {
+            return elements[rowColCoord.row][rowColCoord.col].getColor() == Entity.BLACK;
         }
     }
 
