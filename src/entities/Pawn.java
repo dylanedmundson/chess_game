@@ -140,4 +140,12 @@ public class Pawn extends Entity {
         //
         // image = resizedImg;
     }
+
+    public boolean isFirstMove() {
+        return isFirstMove;
+    }
+
+    public void setFirstMove(boolean isFirstMove) {
+        this.isFirstMove = isFirstMove;
+    }
 }

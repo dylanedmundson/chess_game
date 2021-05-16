@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 //TODO: add save button
+//TODO: load button (load last save for v1)
+//TODO: add reset button
 public class GameBoard extends JPanel implements ActionListener {
     public static final int ANIMATION_DELAY = 10;
     private final String TITLE = "Chess v.1.0";
@@ -18,6 +20,7 @@ public class GameBoard extends JPanel implements ActionListener {
     public static final int BOARD_WIDTH = 800;
     public static final int BOARD_HEIGHT = 800;
     public static final int SQUARE_SIZE = 100;
+    public static final Font LABEL_FONT = new Font("sarif", Font.BOLD, 24);
 
     //colors
     public static final Color BACKGROUND = new Color(0, 128, 0, 255);
@@ -26,16 +29,17 @@ public class GameBoard extends JPanel implements ActionListener {
 
     private BufferedImage image;
     private Graphics dbg;
-    private GameBoardManager gameBoardManager;
+    public GameBoardManager gameBoardManager;
     private Timer timer;
     public InputAdapater inputAdapter;
     private JFrame frame;
-    private JPanel tools;
+    public JPanel tools;
 
     public GameBoard() {
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         dbg = image.getGraphics();
         gameBoardManager = new GameBoardManager();
+        gameBoardManager.setGameBoard(this);
         inputAdapter = new InputAdapater(gameBoardManager);
     }
 
@@ -50,7 +54,7 @@ public class GameBoard extends JPanel implements ActionListener {
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        tools = new ToolPanel();
+        tools = new ToolPanel(this);
         add(tools, BorderLayout.NORTH);
 
         timer = new Timer(ANIMATION_DELAY, this);
@@ -65,13 +69,20 @@ public class GameBoard extends JPanel implements ActionListener {
         g.setColor(BACKGROUND);
         g.fillRect(0, 0, getWidth(), getHeight());
         super.paintComponents(g);
-        //TODO: add labels for rows and columns
-        //TODO: add labels for turn instructions
 
         //draw board
         int counter = 0;
+        g.setFont(LABEL_FONT);
         for (int y = BOARD_START; y < BOARD_START + BOARD_HEIGHT; y += 100) {
+            g.setColor(Color.WHITE);
+            // g.getFontMetrics().getHeight(); get font height for centering
+            int val = (8 - ((y - BOARD_START) / 100));
+            g.drawString("" + (8 - ((y - BOARD_START) / 100)), BOARD_START - 20, y + 60);
             for (int x = BOARD_START; x < BOARD_START + BOARD_WIDTH; x += 100) {
+                if (y == BOARD_START) {
+                    g.setColor(Color.WHITE);
+                    g.drawString("" + (char)('a' + ((x - BOARD_START) / 100)), x + 40, y - 10);
+                }
                 if (counter % 2 == 0) {
                     g.setColor(BOARD_LIGHT);
                 } else {

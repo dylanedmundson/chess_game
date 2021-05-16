@@ -2,12 +2,14 @@ package utils;
 
 import entities.*;
 import gui.GameBoard;
+import gui.ToolPanel;
 
 import java.awt.*;
 import java.util.LinkedList;
 
 //TODO: save game state
 //TODO: add sorting algorithm for sorting pieces taken on side
+//TODO: add more game logic (checkmate, etc.) and instructions for that logic
 public class GameBoardManager {
     public static final int BOARD_WIDTH = 8;
     public static final int BOARD_HEIGHT = 8;
@@ -25,9 +27,9 @@ public class GameBoardManager {
     private LinkedList<RowColCoord> lastMoves;
     private long lastClickTime;
     private byte playersTurn;
+    private GameBoard gb;
 
     public GameBoardManager() {
-
         elements = new Entity[BOARD_HEIGHT][BOARD_WIDTH];
         elements[0] = initRoyalty(Entity.BLACK);
         elements[1] = initPawnRow(Entity.BLACK);
@@ -103,6 +105,7 @@ public class GameBoardManager {
         } else {
             playersTurn = PLAYER1;
         }
+        ((ToolPanel)gb.tools).nextInstruction();
     }
 
     private boolean handleClick() {
@@ -174,5 +177,18 @@ public class GameBoardManager {
         } else {
             return elements[row][col];
         }
+    }
+
+    public void loadGameData(Entity[][] elements, byte playersTurn) {
+        this.elements = elements;
+        this.playersTurn = playersTurn;
+    }
+
+    public byte getPlayersTurn() {
+        return playersTurn;
+    }
+
+    public void setGameBoard(GameBoard gb) {
+        this.gb = gb;
     }
 }
