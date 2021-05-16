@@ -79,7 +79,7 @@ public class GameBoard extends JPanel implements ActionListener {
             counter++;
         }
 
-        //draw pieces
+            //draw pieces
         gameBoardManager.render(g);
     }
 
