@@ -3,14 +3,13 @@ package entities;
 import utils.GameBoardManager;
 import utils.RowColCoord;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 import static utils.GameBoardManager.BOARD_HEIGHT;
 import static utils.GameBoardManager.BOARD_WIDTH;
 
-public abstract class Entity {
+public abstract class Entity implements Comparable<Entity> {
     public static final byte BLACK = 0x0000;
     public static final byte WHITE = 0x0001;
 
@@ -160,5 +159,12 @@ public abstract class Entity {
         } else {
             throw new IllegalArgumentException("Improper input for move dir");
         }
+    }
+
+    protected abstract int getRank();
+
+    @Override
+    public int compareTo(Entity o) {
+        return this.getRank() - o.getRank(); //returns pos if this rank is higher than others
     }
 }

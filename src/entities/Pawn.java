@@ -141,6 +141,11 @@ public class Pawn extends Entity {
         // image = resizedImg;
     }
 
+    @Override
+    protected int getRank() {
+        return 6;
+    }
+
     public boolean isFirstMove() {
         return isFirstMove;
     }

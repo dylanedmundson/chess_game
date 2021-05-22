@@ -2,6 +2,7 @@ package utils;
 
 import entities.*;
 import gui.GameBoard;
+import gui.TakenPiecesGUI;
 import gui.ToolPanel;
 
 import java.awt.*;
@@ -28,6 +29,8 @@ public class GameBoardManager {
     private long lastClickTime;
     private byte playersTurn;
     private GameBoard gb;
+
+    private TakenPiecesGUI takenPiecesGUI;
 
     public GameBoardManager() {
         elements = new Entity[BOARD_HEIGHT][BOARD_WIDTH];
@@ -115,7 +118,13 @@ public class GameBoardManager {
                 lastClickTime = nextClickTime;
                 RowColCoord rowColCoord = CoordinateConverter.getPoint(this.xClick, this.yClick);
                 //click for making move
+                //TODO: figure out weird bug and try to reproduce with queen double taking
                 if (lastMoves != null && lastMovesContains(rowColCoord) && !lasClickCoord.equals(rowColCoord)) {
+                    if (elements[rowColCoord.row][rowColCoord.col] != null && playersTurn == PLAYER1) {
+                        takenPiecesGUI.addPieceP1(elements[rowColCoord.row][rowColCoord.col]);
+                    } else if (elements[rowColCoord.row][rowColCoord.col] != null && playersTurn == PLAYER2){
+                        takenPiecesGUI.addPieceP2(elements[rowColCoord.row][rowColCoord.col]);
+                    }
                     elements[rowColCoord.row][rowColCoord.col] = elements[lasClickCoord.row][lasClickCoord.col];
                     elements[lasClickCoord.row][lasClickCoord.col] = null;
                     elements[rowColCoord.row][rowColCoord.col].move();
@@ -190,5 +199,9 @@ public class GameBoardManager {
 
     public void setGameBoard(GameBoard gb) {
         this.gb = gb;
+    }
+
+    public void setTakenPiecesGUI(TakenPiecesGUI takenPiecesGUI) {
+        this.takenPiecesGUI = takenPiecesGUI;
     }
 }

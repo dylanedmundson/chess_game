@@ -43,4 +43,9 @@ public class Rook extends Entity{
             e.printStackTrace();
         }
     }
+
+    @Override
+    protected int getRank() {
+        return 3;
+    }
 }

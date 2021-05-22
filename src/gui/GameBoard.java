@@ -34,12 +34,16 @@ public class GameBoard extends JPanel implements ActionListener {
     public InputAdapater inputAdapter;
     private JFrame frame;
     public JPanel tools;
+    private TakenPiecesGUI takenPiecesGUI;
 
     public GameBoard() {
+        takenPiecesGUI = new TakenPiecesGUI(BOARD_WIDTH + BOARD_START + 50/2, BOARD_START,
+                WIDTH - (BOARD_WIDTH + BOARD_START + 50/2) - 50/2, HEIGHT - 2 * BOARD_START);
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         dbg = image.getGraphics();
         gameBoardManager = new GameBoardManager();
         gameBoardManager.setGameBoard(this);
+        gameBoardManager.setTakenPiecesGUI(takenPiecesGUI);
         inputAdapter = new InputAdapater(gameBoardManager);
     }
 
@@ -96,6 +100,9 @@ public class GameBoard extends JPanel implements ActionListener {
 
         //draw pieces
         gameBoardManager.render(g);
+
+        //draw takenPieces
+        takenPiecesGUI.render(g);
     }
 
     @Override

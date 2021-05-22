@@ -1,5 +1,7 @@
 package gui;
 
+import utils.GameSaveFileScanner;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,15 +10,18 @@ import java.awt.event.ActionListener;
 import static gui.GameBoard.LABEL_FONT;
 
 public class ToolPanel extends JPanel {
+    private final GameSaveFileScanner gsfs = new GameSaveFileScanner("res/game_save_data/newSave.txt");
+
     private JLabel instructionLabel;
     private JButton saveButton;
     private String instructionString;
+    private JButton loadButton;
 
     private final int STR_LEN = 79;
     private final String[] INSTRUCTIONS = new String[]{"Player 1 Make Your Move", "Player 2 Make Your Move"};
     private int currInstructionIndex = 0;
 
-    public ToolPanel(GameBoard gbm) {
+    public ToolPanel(GameBoard gb) {
         instructionString = INSTRUCTIONS[currInstructionIndex];
         centerInstructionLabel();
         instructionLabel = new JLabel(instructionString);
@@ -28,12 +33,23 @@ public class ToolPanel extends JPanel {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: implement save on click
+                gsfs.writeGameData(gb.gameBoardManager);
+            }
+        });
+
+        loadButton = new JButton("Load");
+        loadButton.setFont(LABEL_FONT);
+
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gsfs.readInData(gb.gameBoardManager);
             }
         });
 
         setLayout(new FlowLayout());
         add(saveButton);
+        add(loadButton);
         add(instructionLabel);
         setBackground(GameBoard.BACKGROUND);
     }

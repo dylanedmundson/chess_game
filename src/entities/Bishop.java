@@ -41,4 +41,9 @@ public class Bishop extends Entity{
             e.printStackTrace();
         }
     }
+
+    @Override
+    protected int getRank() {
+        return 5;
+    }
 }

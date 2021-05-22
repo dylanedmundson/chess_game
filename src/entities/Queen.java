@@ -45,4 +45,9 @@ public class Queen extends Entity{
             e.printStackTrace();
         }
     }
+
+    @Override
+    protected int getRank() {
+        return 2;
+    }
 }

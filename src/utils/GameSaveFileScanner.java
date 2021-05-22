@@ -12,6 +12,10 @@ public class GameSaveFileScanner {
 
     private File inputFile;
 
+    /**
+     *
+     * @param path where we want to save the file
+     */
     public GameSaveFileScanner(String path) {
         if (!path.endsWith(".txt")) {
             throw new IllegalArgumentException();
@@ -27,10 +31,12 @@ public class GameSaveFileScanner {
         }
     }
 
-    public GameBoardManager readInData() {
+    /**
+     * reads data into a Game board manager
+     */
+    public void readInData(GameBoardManager gbm) {
         try {
             Scanner input = new Scanner(inputFile);
-            GameBoardManager gbm =  new GameBoardManager();
             Entity[][] entities = new Entity[GameBoardManager.BOARD_HEIGHT][GameBoardManager.BOARD_WIDTH];
             byte playersTurn = Byte.parseByte(input.nextLine());
             int row = 0;
@@ -56,12 +62,12 @@ public class GameSaveFileScanner {
                 row++;
             }
             gbm.loadGameData(entities, playersTurn);
-            return gbm;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return null;
         }
     }
+
+
     private Entity createEntity(String className, byte color, GameBoardManager gbm) {
         if (className.equals("entities.Rook")) {
             return new Rook(color, gbm);
@@ -81,6 +87,10 @@ public class GameSaveFileScanner {
 
 }
 
+    /**
+     * writes data to save file
+     * @param gbm GameBoardManage whos state is being saved
+     */
     public void writeGameData(GameBoardManager gbm) {
         try {
             PrintStream output = new PrintStream(inputFile);
@@ -116,31 +126,31 @@ public class GameSaveFileScanner {
     }
 
     public static void main(String[] args) {
-        try {
-            GameSaveFileScanner s = new GameSaveFileScanner("res/white_rook.png");
-            System.out.println("Fail: improper extension test");
-            return;
-        } catch (IllegalArgumentException e) {
-            //pass if throws illegal argument exception
-        }
-
-        //test new file is made
-        GameSaveFileScanner s2 = new GameSaveFileScanner("res/game_save_data/newSave.txt");
-        File newFile = new File("res/game_save_data/newSave.txt");
-        if (!newFile.exists()) {
-            System.out.println("Fail: make new file test");
-            return;
-        } else {
-            s2.deleteFile();
-        }
-
-        GameBoardManager gbm = new GameBoardManager();
-        GameSaveFileScanner scanner = new GameSaveFileScanner("res/game_save_data/newSave.txt");
-        scanner.writeGameData(gbm);
-        GameBoardManager gbm2 = scanner.readInData();
-
-        //TODO: write more tests for reading and writing
-
-        System.out.println("All tests passed");
+        // try {
+        //     GameSaveFileScanner s = new GameSaveFileScanner("res/white_rook.png");
+        //     System.out.println("Fail: improper extension test");
+        //     return;
+        // } catch (IllegalArgumentException e) {
+        //     //pass if throws illegal argument exception
+        // }
+        //
+        // //test new file is made
+        // GameSaveFileScanner s2 = new GameSaveFileScanner("res/game_save_data/newSave.txt");
+        // File newFile = new File("res/game_save_data/newSave.txt");
+        // if (!newFile.exists()) {
+        //     System.out.println("Fail: make new file test");
+        //     return;
+        // } else {
+        //     s2.deleteFile();
+        // }
+        //
+        // GameBoardManager gbm = new GameBoardManager();
+        // GameSaveFileScanner scanner = new GameSaveFileScanner("res/game_save_data/newSave.txt");
+        // scanner.writeGameData(gbm);
+        // GameBoardManager gbm2 = scanner.readInData();
+        //
+        // //TODO: write more tests for reading and writing
+        //
+        // System.out.println("All tests passed");
     }
 }
