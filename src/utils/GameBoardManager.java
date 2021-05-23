@@ -7,6 +7,7 @@ import gui.ToolPanel;
 
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 //TODO: add more game logic (checkmate, etc.) and instructions for that logic
@@ -28,6 +29,8 @@ public class GameBoardManager {
     private long lastClickTime;
     private byte playersTurn;
     private GameBoard gb;
+    private Entity p1King;
+    private Entity p2King;
 
     private TakenPiecesGUI takenPiecesGUI;
 
@@ -40,7 +43,8 @@ public class GameBoardManager {
 
         lastClickTime = System.currentTimeMillis();
         playersTurn = PLAYER1;
-
+        p1King = elements[7][4];
+        p2King = elements[0][4];
     }
 
     private Entity[] initRoyalty(byte color) {
@@ -111,6 +115,8 @@ public class GameBoardManager {
     }
 
     private boolean handleClick() {
+        boolean ischeck = checkForCheck();
+        //TODO: check for check is working, need to implement user functionality next
         if (isClicked) {
             long nextClickTime = System.currentTimeMillis();
             if (nextClickTime - lastClickTime > DEBOUNCE_CLICK) {
@@ -163,6 +169,37 @@ public class GameBoardManager {
         return false;
     }
 
+    private boolean checkForCheck() {
+        for (int row = 0; row < BOARD_HEIGHT; row++) {
+            for (int col = 0; col < BOARD_WIDTH; col++) {
+                RowColCoord rc = new RowColCoord(row, col);
+                Entity e = getEntityAt(rc);
+                if (e != null) {
+                    if (playersTurn == PLAYER1) {
+                        if (e.getColor() != Entity.WHITE) {
+                            List<RowColCoord> moves = elements[row][col].getPotMoves(new RowColCoord(row, col));
+                            for (RowColCoord rowColCoord : moves) {
+                                if (getEntityAt(rowColCoord) == p1King) {
+                                    System.out.println("check");
+                                }
+                            }
+                        }
+                    } else {
+                        if (e.getColor() != Entity.BLACK) {
+                            List<RowColCoord> moves = elements[row][col].getPotMoves(new RowColCoord(row, col));
+                            for (RowColCoord rowColCoord : moves) {
+                                if (getEntityAt(rowColCoord) == p2King) {
+                                    System.out.println("check");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private boolean isPlayerPiece(RowColCoord rowColCoord) {
         if (playersTurn == PLAYER1) {
             return elements[rowColCoord.row][rowColCoord.col].getColor() == Entity.WHITE;
@@ -187,6 +224,10 @@ public class GameBoardManager {
         } else {
             return elements[row][col];
         }
+    }
+
+    public Entity getEntityAt(RowColCoord rowColCoord) {
+        return getEntityAt(rowColCoord.row, rowColCoord.col);
     }
 
     public void loadGameData(Entity[][] elements, byte playersTurn) {
