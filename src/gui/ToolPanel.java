@@ -33,7 +33,7 @@ public class ToolPanel extends JPanel {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gsfs.writeGameData(gb.gameBoardManager);
+                gsfs.writeGameData(gb.gameBoardManager, gb.takenPiecesGUI);
             }
         });
 
@@ -43,7 +43,7 @@ public class ToolPanel extends JPanel {
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gsfs.readInData(gb.gameBoardManager);
+                gsfs.readInData(gb.gameBoardManager, gb.takenPiecesGUI);
             }
         });
 

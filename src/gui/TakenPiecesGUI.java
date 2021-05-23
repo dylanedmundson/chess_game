@@ -1,12 +1,14 @@
 package gui;
 
-import entities.Entity;
+import entities.*;
 import utils.ArraySorter;
+import utils.GameBoardManager;
 
 import java.awt.*;
+import java.util.Scanner;
 
-//TODO: add to save and load functionallity
 public class TakenPiecesGUI {
+    private final int MAX_PIECES = 16;
     private Entity[] player1Takes;
     private int player1TakeIndex = 0;
     private Entity[] player2Takes;
@@ -17,10 +19,9 @@ public class TakenPiecesGUI {
     private int x; //coords of lop L
     private int y;
     private int imageScale;
-
     public TakenPiecesGUI(int x, int y, int width, int height) {
-        player1Takes = new Entity[16];
-        player2Takes = new Entity[16];
+        player1Takes = new Entity[MAX_PIECES];
+        player2Takes = new Entity[MAX_PIECES];
         this.x = x;
         this.y = y;
         this.width = width;
@@ -66,6 +67,77 @@ public class TakenPiecesGUI {
                 }
                 i++;
             }
+        }
+    }
+
+    public String serialize() {
+        //print p1 taken pieces
+        String results = "";
+        results += player1TakeIndex + "\n";
+        if (player1TakeIndex == 0) {
+            results += "\n";
+        }
+        for (int i = 0; i < player1TakeIndex; i++) {
+            Entity e = player1Takes[i];
+            results += e.getClass().getName() + "=" + e.getColor();
+            if (i != player1TakeIndex - 1) {
+                results += ",";
+            }
+        }
+        results += "\n";
+
+        //print p2 taken pieces
+        results += player2TakeIndex + "\n";
+        if (player2TakeIndex == 0) {
+            results += "\n";
+        }
+        for (int i = 0; i < player2TakeIndex; i++) {
+            Entity e = player2Takes[i];
+            results += e.getClass().getName() + "=" + e.getColor();
+            if (i != player2TakeIndex - 1) {
+                results += ",";
+            }
+        }
+        results += "\n";
+
+        return results + "__EOF\n";
+    }
+
+    public void deserialize(Scanner input) {
+        player1Takes = new Entity[MAX_PIECES];
+        player1TakeIndex = Integer.parseInt(input.nextLine());
+        String[] splitLine = input.nextLine().split(",");
+        for (int i = 0; i < splitLine.length; i++) {
+            String[] splitItem = splitLine[i].split("=");
+            byte color = Byte.parseByte(splitItem[1]);
+            player1Takes[i] = createEntity(splitItem[0], color, null);
+        }
+
+        player2Takes = new Entity[MAX_PIECES];
+        player2TakeIndex = Integer.parseInt(input.nextLine());
+        splitLine = input.nextLine().split(",");
+        for (int i = 0; i < splitLine.length; i++) {
+            String[] splitItem = splitLine[i].split("=");
+            byte color = Byte.parseByte(splitItem[1]);
+            player2Takes[i] = createEntity(splitItem[0], color, null);
+        }
+    }
+
+    private Entity createEntity(String className, byte color, GameBoardManager gbm) {
+        if (className.equals("entities.Rook")) {
+            return new Rook(color, gbm);
+        } else if (className.equals("entities.Knight")) {
+            return new Knight(color, gbm);
+        } else if (className.equals("entities.Bishop")) {
+            return new Bishop(color, gbm);
+        } else if (className.equals("entities.Queen")) {
+            return new Queen(color, gbm);
+        } else if (className.equals("entities.King")) {
+            return new King(color, gbm);
+        } else if (className.equals("entities.Pawn")) {
+            return new Pawn(color, gbm);
+        } else {
+            return null;
         }
     }
 }

@@ -1,16 +1,13 @@
 package gui;
 
 import utils.GameBoardManager;
-
+//TODO: sometimes get white screen when starting up game
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
-//TODO: add save button
-//TODO: load button (load last save for v1)
-//TODO: add reset button
 public class GameBoard extends JPanel implements ActionListener {
     public static final int ANIMATION_DELAY = 10;
     private final String TITLE = "Chess v.1.0";
@@ -34,7 +31,7 @@ public class GameBoard extends JPanel implements ActionListener {
     public InputAdapater inputAdapter;
     private JFrame frame;
     public JPanel tools;
-    private TakenPiecesGUI takenPiecesGUI;
+    public TakenPiecesGUI takenPiecesGUI;
 
     public GameBoard() {
         takenPiecesGUI = new TakenPiecesGUI(BOARD_WIDTH + BOARD_START + 50/2, BOARD_START,

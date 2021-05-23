@@ -7,9 +7,8 @@ import gui.ToolPanel;
 
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.Scanner;
 
-//TODO: save game state
-//TODO: add sorting algorithm for sorting pieces taken on side
 //TODO: add more game logic (checkmate, etc.) and instructions for that logic
 public class GameBoardManager {
     public static final int BOARD_WIDTH = 8;
@@ -118,7 +117,6 @@ public class GameBoardManager {
                 lastClickTime = nextClickTime;
                 RowColCoord rowColCoord = CoordinateConverter.getPoint(this.xClick, this.yClick);
                 //click for making move
-                //TODO: figure out weird bug and try to reproduce with queen double taking
                 if (lastMoves != null && lastMovesContains(rowColCoord) && !lasClickCoord.equals(rowColCoord)) {
                     if (elements[rowColCoord.row][rowColCoord.col] != null && playersTurn == PLAYER1) {
                         takenPiecesGUI.addPieceP1(elements[rowColCoord.row][rowColCoord.col]);
@@ -132,9 +130,12 @@ public class GameBoardManager {
                     for (RowColCoord rc : lastMoves) {
                         isHighlighted[rc.row][rc.col] = false;
                     }
+                    lastMoves.clear();
+                    lasClickCoord = null;
                     return true;
                 }
                 //click for highlighting possible moves
+                //handles highlighting squares
                 if (rowColCoord != null && elements[rowColCoord.row][rowColCoord.col] != null &&
                         isPlayerPiece(rowColCoord)) {
                     if (lasClickCoord != null) {
@@ -203,5 +204,78 @@ public class GameBoardManager {
 
     public void setTakenPiecesGUI(TakenPiecesGUI takenPiecesGUI) {
         this.takenPiecesGUI = takenPiecesGUI;
+    }
+
+    public String serialize() {
+        String results = "";
+        results += playersTurn + "\n";
+        for (int row = 0; row < BOARD_HEIGHT; row++) {
+            for (int col = 0; col < BOARD_WIDTH; col++) {
+                Entity e = getEntityAt(row, col);
+                String eName;
+                if (e == null) {
+                    eName = "n";
+                } else {
+                    eName = getEntityAt(row, col).getClass().getName();
+                    eName += "=" + e.getColor();
+                    if (e.getClass().getName().equals("entities.Pawn")) {
+                        eName += "=" + ((Pawn)e).isFirstMove();
+                    }
+                }
+                results += eName;
+                if (col != BOARD_WIDTH - 1) {
+                    results += ",";
+                }
+            }
+            results += "\n";
+        }
+        return results + "__EOF\n";
+    }
+
+    public void deserialize(Scanner input) {
+        Entity[][] entities = new Entity[GameBoardManager.BOARD_HEIGHT][GameBoardManager.BOARD_WIDTH];
+        byte playersTurn = Byte.parseByte(input.nextLine());
+        int row = 0;
+        String nextLine;
+        while (!(nextLine = input.nextLine()).equals("__EOF")) {
+            String[] splitLine = nextLine.split(",");
+            for (int col = 0; col < splitLine.length; col++) {
+                if (splitLine[col].equals("n")) {
+                    entities[row][col] = null;
+                } else {
+                    String[] splitItem = splitLine[col].split("=");
+                    if (splitItem.length > 2) {
+                        if (splitItem[0].equals("entities.Pawn")) {
+                            byte color = Byte.parseByte(splitItem[1]);
+                            entities[row][col] = createEntity(splitItem[0], color, this);
+                            ((Pawn) entities[row][col]).setFirstMove(Boolean.parseBoolean(splitItem[2]));
+                        }
+                    } else {
+                        byte color = Byte.parseByte(splitItem[1]);
+                        entities[row][col] = createEntity(splitItem[0], color, this);
+                    }
+                }
+            }
+            row++;
+        }
+        loadGameData(entities, playersTurn);
+    }
+
+    private Entity createEntity(String className, byte color, GameBoardManager gbm) {
+        if (className.equals("entities.Rook")) {
+            return new Rook(color, gbm);
+        } else if (className.equals("entities.Knight")) {
+            return new Knight(color, gbm);
+        } else if (className.equals("entities.Bishop")) {
+            return new Bishop(color, gbm);
+        } else if (className.equals("entities.Queen")) {
+            return new Queen(color, gbm);
+        } else if (className.equals("entities.King")) {
+            return new King(color, gbm);
+        } else if (className.equals("entities.Pawn")) {
+            return new Pawn(color, gbm);
+        } else {
+            return null;
+        }
     }
 }

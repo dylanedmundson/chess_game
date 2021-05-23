@@ -1,6 +1,7 @@
 package utils;
 
 import entities.*;
+import gui.TakenPiecesGUI;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,87 +35,25 @@ public class GameSaveFileScanner {
     /**
      * reads data into a Game board manager
      */
-    public void readInData(GameBoardManager gbm) {
+    public void readInData(GameBoardManager gbm, TakenPiecesGUI tpgui) {
         try {
             Scanner input = new Scanner(inputFile);
-            Entity[][] entities = new Entity[GameBoardManager.BOARD_HEIGHT][GameBoardManager.BOARD_WIDTH];
-            byte playersTurn = Byte.parseByte(input.nextLine());
-            int row = 0;
-            while (input.hasNextLine()) {
-                String[] splitLine = input.nextLine().split(",");
-                for (int col = 0; col < splitLine.length; col++) {
-                    if (splitLine[col].equals("n")) {
-                        entities[row][col] = null;
-                    } else {
-                        String[] splitItem = splitLine[col].split("=");
-                        if (splitItem.length > 2) {
-                            if (splitItem[0].equals("entities.Pawn")) {
-                                byte color = Byte.parseByte(splitItem[1]);
-                                entities[row][col] = createEntity(splitItem[0], color, gbm);
-                                ((Pawn) entities[row][col]).setFirstMove(Boolean.parseBoolean(splitItem[2]));
-                            }
-                        } else {
-                            byte color = Byte.parseByte(splitItem[1]);
-                            entities[row][col] = createEntity(splitItem[0], color, gbm);
-                        }
-                    }
-                }
-                row++;
-            }
-            gbm.loadGameData(entities, playersTurn);
+            gbm.deserialize(input);
+            tpgui.deserialize(input);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-
-    private Entity createEntity(String className, byte color, GameBoardManager gbm) {
-        if (className.equals("entities.Rook")) {
-            return new Rook(color, gbm);
-        } else if (className.equals("entities.Knight")) {
-            return new Knight(color, gbm);
-        } else if (className.equals("entities.Bishop")) {
-            return new Bishop(color, gbm);
-        } else if (className.equals("entities.Queen")) {
-            return new Queen(color, gbm);
-        } else if (className.equals("entities.King")) {
-            return new King(color, gbm);
-        } else if (className.equals("entities.Pawn")) {
-            return new Pawn(color, gbm);
-        } else {
-            return null;
-        }
-
-}
-
     /**
      * writes data to save file
      * @param gbm GameBoardManage whos state is being saved
      */
-    public void writeGameData(GameBoardManager gbm) {
+    public void writeGameData(GameBoardManager gbm, TakenPiecesGUI tpgui) {
         try {
             PrintStream output = new PrintStream(inputFile);
-            output.println(gbm.getPlayersTurn());
-            for (int row = 0; row < gbm.BOARD_HEIGHT; row++) {
-                for (int col = 0; col < gbm.BOARD_WIDTH; col++) {
-                    Entity e = gbm.getEntityAt(row, col);
-                    String eName;
-                    if (e == null) {
-                        eName = "n";
-                    } else {
-                        eName = gbm.getEntityAt(row, col).getClass().getName();
-                        eName += "=" + e.getColor();
-                        if (e.getClass().getName().equals("entities.Pawn")) {
-                            eName += "=" + ((Pawn)e).isFirstMove();
-                        }
-                    }
-                    output.print(eName);
-                    if (col != gbm.BOARD_WIDTH - 1) {
-                        output.print(",");
-                    }
-                }
-                output.println();
-            }
+            output.print(gbm.serialize());
+            output.print(tpgui.serialize());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
