@@ -76,29 +76,31 @@ public class TakenPiecesGUI {
         results += player1TakeIndex + "\n";
         if (player1TakeIndex == 0) {
             results += "\n";
-        }
-        for (int i = 0; i < player1TakeIndex; i++) {
-            Entity e = player1Takes[i];
-            results += e.getClass().getName() + "=" + e.getColor();
-            if (i != player1TakeIndex - 1) {
-                results += ",";
+        } else {
+            for (int i = 0; i < player1TakeIndex; i++) {
+                Entity e = player1Takes[i];
+                results += e.getClass().getName() + "=" + e.getColor();
+                if (i != player1TakeIndex - 1) {
+                    results += ",";
+                }
             }
+            results += "\n";
         }
-        results += "\n";
 
         //print p2 taken pieces
         results += player2TakeIndex + "\n";
         if (player2TakeIndex == 0) {
             results += "\n";
-        }
-        for (int i = 0; i < player2TakeIndex; i++) {
-            Entity e = player2Takes[i];
-            results += e.getClass().getName() + "=" + e.getColor();
-            if (i != player2TakeIndex - 1) {
-                results += ",";
+        } else {
+            for (int i = 0; i < player2TakeIndex; i++) {
+                Entity e = player2Takes[i];
+                results += e.getClass().getName() + "=" + e.getColor();
+                if (i != player2TakeIndex - 1) {
+                    results += ",";
+                }
             }
+            results += "\n";
         }
-        results += "\n";
 
         return results + "__EOF\n";
     }
@@ -109,8 +111,10 @@ public class TakenPiecesGUI {
         String[] splitLine = input.nextLine().split(",");
         for (int i = 0; i < splitLine.length; i++) {
             String[] splitItem = splitLine[i].split("=");
-            byte color = Byte.parseByte(splitItem[1]);
-            player1Takes[i] = createEntity(splitItem[0], color, null);
+            if (splitItem.length >= 2) {
+                byte color = Byte.parseByte(splitItem[1]);
+                player1Takes[i] = createEntity(splitItem[0], color, null);
+            }
         }
 
         player2Takes = new Entity[MAX_PIECES];
@@ -118,8 +122,10 @@ public class TakenPiecesGUI {
         splitLine = input.nextLine().split(",");
         for (int i = 0; i < splitLine.length; i++) {
             String[] splitItem = splitLine[i].split("=");
-            byte color = Byte.parseByte(splitItem[1]);
-            player2Takes[i] = createEntity(splitItem[0], color, null);
+            if (splitItem.length >= 2) {
+                byte color = Byte.parseByte(splitItem[1]);
+                player2Takes[i] = createEntity(splitItem[0], color, null);
+            }
         }
     }
 

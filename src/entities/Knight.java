@@ -61,6 +61,6 @@ public class Knight extends Entity{
 
     @Override
     protected int getRank() {
-        return 4;
+        return KNIGHT_RANK;
     }
 }

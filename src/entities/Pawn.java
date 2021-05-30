@@ -143,7 +143,7 @@ public class Pawn extends Entity {
 
     @Override
     protected int getRank() {
-        return 6;
+        return PAWN_RANK;
     }
 
     public boolean isFirstMove() {

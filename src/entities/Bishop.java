@@ -44,6 +44,6 @@ public class Bishop extends Entity{
 
     @Override
     protected int getRank() {
-        return 5;
+        return BISHOP_RANK;
     }
 }

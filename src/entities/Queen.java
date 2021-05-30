@@ -49,6 +49,6 @@ public class Queen extends Entity{
 
     @Override
     protected int getRank() {
-        return 2;
+        return QUEEN_RANK;
     }
 }

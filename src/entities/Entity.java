@@ -22,6 +22,13 @@ public abstract class Entity implements Comparable<Entity> {
     protected static final byte DOWN_LEFT = 0x0006;
     protected static final byte DOWN_RIGHT = 0x0007;
 
+    public static final int KING_RANK = 1;
+    public static final int QUEEN_RANK = 2;
+    public static final int ROOK_RANK = 3;
+    public static final int KNIGHT_RANK = 4;
+    public static final int BISHOP_RANK = 5;
+    public static final int PAWN_RANK = 6;
+
     protected boolean isAlive;
     protected BufferedImage image;
     protected byte color;
@@ -166,5 +173,15 @@ public abstract class Entity implements Comparable<Entity> {
     @Override
     public int compareTo(Entity o) {
         return this.getRank() - o.getRank(); //returns pos if this rank is higher than others
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj.getClass().equals(this.getClass()) && ((Entity)obj).color == this.color;
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getName();
     }
 }
