@@ -7,45 +7,33 @@ import java.util.Random;
 
 public class ArraySorter {
     public static void qSort(Entity[] entityArray, int length) {
-        if (length != 0) {
-            mqSort(entityArray, 0, length - 1);
-        }
-    }
-
-    private static void mqSort(Entity[] entityArray, int low, int high) {
-        //TODO: figure out infinite recursion problem
-        if (low < high) {
-            int pi = low;
-            for (int i = low; i <= high; i++) {
-                if (entityArray[i].compareTo(entityArray[pi]) < 0) {
+        for (int i = 0; i < length; i++) {
+            for (int j = i + 1; j < length ;j++) {
+                if  (entityArray[i].compareTo(entityArray[j]) > 0) {
                     Entity temp = entityArray[i];
-                    entityArray[i] = entityArray[pi];
-                    entityArray[pi] = temp;
-                    pi = i;
+                    entityArray[i] = entityArray[j];
+                    entityArray[j] = temp;
                 }
-                mqSort(entityArray, low, pi - 1);
-                mqSort(entityArray, pi + 1, high);
             }
         }
     }
 
+
     private static final Random RAND = new Random();
-    private static final int ITERATIONS = 10;
+    private static final int ITERATIONS = 10000;
 
     public static void main(String[] args) {
         System.out.println("Initiating Tests:");
         System.out.print("Testing ");
         for (int i = 0; i < ITERATIONS; i++) {
-            // if (i % (ITERATIONS / 10) == (ITERATIONS / (ITERATIONS / 10))) {
+            if (i % (ITERATIONS / 100) == 0) {
                 System.out.print(".");
-            // }
+            }
             Entity[] entities = new Entity[16];
             int length = RAND.nextInt(17);
             for (int j = 0; j < length; j++) {
                 entities[j] = createPiece();
             }
-            System.out.println(Arrays.toString(entities));
-            System.out.println(length);
             qSort(entities, length);;
             for (int j = 0; j < length - 1; j++) {
                 if (entities[j].compareTo(entities[j + 1]) > 0) {
@@ -54,6 +42,7 @@ public class ArraySorter {
                 }
             }
         }
+        System.out.println();
         System.out.println("All tests passed");
     }
 

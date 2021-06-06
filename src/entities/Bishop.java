@@ -43,7 +43,7 @@ public class Bishop extends Entity{
     }
 
     @Override
-    protected int getRank() {
+    public int getRank() {
         return BISHOP_RANK;
     }
 }

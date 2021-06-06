@@ -4,20 +4,20 @@ import entities.*;
 import gui.GameBoard;
 import gui.TakenPiecesGUI;
 import gui.ToolPanel;
+import sun.plugin2.util.ColorUtil;
 
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-//TODO: add more game logic (checkmate, etc.) and instructions for that logic
 public class GameBoardManager {
     public static final int BOARD_WIDTH = 8;
     public static final int BOARD_HEIGHT = 8;
     private static final Color HIGHLIGHT = new Color(255, 0, 0, 100);
     private static final int DEBOUNCE_CLICK = 200;
-    private static final byte PLAYER1 = 0x0000;
-    private static final byte PLAYER2 = 0x0001;
+    public static final byte PLAYER1 = 0x0000;
+    public static final byte PLAYER2 = 0x0001;
 
     private Entity[][] elements;
     private boolean[][] isHighlighted = new boolean[BOARD_WIDTH][BOARD_HEIGHT];
@@ -29,8 +29,6 @@ public class GameBoardManager {
     private long lastClickTime;
     private byte playersTurn;
     private GameBoard gb;
-    private Entity p1King;
-    private Entity p2King;
 
     private TakenPiecesGUI takenPiecesGUI;
 
@@ -43,8 +41,6 @@ public class GameBoardManager {
 
         lastClickTime = System.currentTimeMillis();
         playersTurn = PLAYER1;
-        p1King = elements[7][4];
-        p2King = elements[0][4];
     }
 
     private Entity[] initRoyalty(byte color) {
@@ -99,7 +95,11 @@ public class GameBoardManager {
     }
 
     public void tick() {
-
+        if (checkForCheck()) {
+            if (isCheckMate()) {
+                gameOver();
+            }
+        }
         if (handleClick()) {
             switchPlayer();
         }
@@ -115,8 +115,6 @@ public class GameBoardManager {
     }
 
     private boolean handleClick() {
-        boolean ischeck = checkForCheck();
-        //TODO: check for check is working, need to implement user functionality next
         if (isClicked) {
             long nextClickTime = System.currentTimeMillis();
             if (nextClickTime - lastClickTime > DEBOUNCE_CLICK) {
@@ -152,11 +150,15 @@ public class GameBoardManager {
                         }
                     }
                     if (rowColCoord != null) {
-                        LinkedList<RowColCoord> moves = elements[rowColCoord.row][rowColCoord.col].getPotMoves(rowColCoord);
-                        if (moves == null) {
-                            moves = new LinkedList<>();
-                        }
+                        LinkedList<RowColCoord> movesTemp = elements[rowColCoord.row][rowColCoord.col].getPotMoves(rowColCoord);
+                        LinkedList<RowColCoord> moves = new LinkedList<>();
                         moves.add(rowColCoord);
+                        for (int i = 0; i < movesTemp.size(); i++) {
+                            RowColCoord mv = movesTemp.get(i);
+                            if (preventsCheck(mv, rowColCoord)) {
+                                moves.add(movesTemp.get(i));
+                            }
+                        }
                         for (RowColCoord rc : moves) {
                             isHighlighted[rc.row][rc.col] = true;
                         }
@@ -169,6 +171,39 @@ public class GameBoardManager {
         return false;
     }
 
+    private void gameOver() {
+        gb.gameOverScreen.setGameOver(playersTurn);
+    }
+
+    private boolean isCheckMate() {
+        for (int row = 0; row < BOARD_HEIGHT; row++) {
+            for (int col = 0; col < BOARD_WIDTH; col++) {
+                RowColCoord click = new RowColCoord(row, col);
+                Entity e = getEntityAt(click);
+                if (e != null) {
+                    List<RowColCoord> moves = e.getPotMoves(click);
+                    for (RowColCoord mv : moves) {
+                        if (e.getColor() == playersTurn && preventsCheck(mv, click)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean preventsCheck(RowColCoord mv, RowColCoord click) {
+        Entity mvHolder = elements[mv.row][mv.col];
+        Entity clickHolder = elements[click.row][click.col];
+        elements[mv.row][mv.col] = elements[click.row][click.col];
+        elements[click.row][click.col] = null;
+        boolean val =  !checkForCheck();
+        elements[click.row][click.col] = clickHolder;
+        elements[mv.row][mv.col] = mvHolder;
+        return val;
+    }
+
     private boolean checkForCheck() {
         for (int row = 0; row < BOARD_HEIGHT; row++) {
             for (int col = 0; col < BOARD_WIDTH; col++) {
@@ -179,8 +214,10 @@ public class GameBoardManager {
                         if (e.getColor() != Entity.WHITE) {
                             List<RowColCoord> moves = elements[row][col].getPotMoves(new RowColCoord(row, col));
                             for (RowColCoord rowColCoord : moves) {
-                                if (getEntityAt(rowColCoord) == p1King) {
-                                    System.out.println("check");
+                                Entity nextE = getEntityAt(rowColCoord);
+                                if (nextE != null && nextE.getRank() == Entity.KING_RANK && nextE.getColor() == Entity.WHITE) {
+                                    //do something
+                                    return true;
                                 }
                             }
                         }
@@ -188,8 +225,10 @@ public class GameBoardManager {
                         if (e.getColor() != Entity.BLACK) {
                             List<RowColCoord> moves = elements[row][col].getPotMoves(new RowColCoord(row, col));
                             for (RowColCoord rowColCoord : moves) {
-                                if (getEntityAt(rowColCoord) == p2King) {
-                                    System.out.println("check");
+                                Entity nextE = getEntityAt(rowColCoord);
+                                if (nextE != null && nextE.getRank() == Entity.KING_RANK && nextE.getColor() == Entity.BLACK) {
+                                    //do something
+                                    return true;
                                 }
                             }
                         }

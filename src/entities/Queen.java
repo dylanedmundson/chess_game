@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
-//TODO: debug problem with allowing multiple clicks
 public class Queen extends Entity{
     public Queen(byte color, GameBoardManager gbm) {
         super(color, gbm);
@@ -48,7 +47,7 @@ public class Queen extends Entity{
     }
 
     @Override
-    protected int getRank() {
+    public int getRank() {
         return QUEEN_RANK;
     }
 }

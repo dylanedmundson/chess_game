@@ -58,7 +58,7 @@ public class King extends Entity {
     }
 
     @Override
-    protected int getRank() {
+    public int getRank() {
         return KING_RANK;
     }
 }

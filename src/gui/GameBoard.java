@@ -32,6 +32,7 @@ public class GameBoard extends JPanel implements ActionListener {
     private JFrame frame;
     public JPanel tools;
     public TakenPiecesGUI takenPiecesGUI;
+    public GameOverScreen gameOverScreen;
 
     public GameBoard() {
         takenPiecesGUI = new TakenPiecesGUI(BOARD_WIDTH + BOARD_START + 50/2, BOARD_START,
@@ -42,6 +43,7 @@ public class GameBoard extends JPanel implements ActionListener {
         gameBoardManager.setGameBoard(this);
         gameBoardManager.setTakenPiecesGUI(takenPiecesGUI);
         inputAdapter = new InputAdapater(gameBoardManager);
+        gameOverScreen = new GameOverScreen(image);
     }
 
     public void init() {
@@ -51,7 +53,6 @@ public class GameBoard extends JPanel implements ActionListener {
         frame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         frame.setMinimumSize(new Dimension(WIDTH, HEIGHT));
         frame.setMaximumSize(new Dimension(WIDTH, HEIGHT));
-        frame.setVisible(true);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -62,6 +63,7 @@ public class GameBoard extends JPanel implements ActionListener {
         timer.start();
         addMouseListener(inputAdapter);
         frame.add(this);
+        frame.setVisible(true);
     }
 
     @Override
@@ -106,6 +108,9 @@ public class GameBoard extends JPanel implements ActionListener {
     public void paint(Graphics g) {
         super.paint(g);
         paintComponents(dbg);
+        if (gameOverScreen.isGameOver()) {
+            gameOverScreen.render();
+        }
         g.drawImage(image, 0, 0,null);
 
     }

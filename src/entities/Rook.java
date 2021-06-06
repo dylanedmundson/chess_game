@@ -45,7 +45,7 @@ public class Rook extends Entity{
     }
 
     @Override
-    protected int getRank() {
+    public int getRank() {
         return ROOK_RANK;
     }
 }

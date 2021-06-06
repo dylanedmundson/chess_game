@@ -142,7 +142,7 @@ public class Pawn extends Entity {
     }
 
     @Override
-    protected int getRank() {
+    public int getRank() {
         return PAWN_RANK;
     }
 

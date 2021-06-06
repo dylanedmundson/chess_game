@@ -1,7 +1,6 @@
 package utils;
 
 import entities.*;
-import gui.GameBoard;
 import gui.TakenPiecesGUI;
 
 import java.io.File;

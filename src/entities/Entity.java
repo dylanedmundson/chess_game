@@ -10,8 +10,8 @@ import static utils.GameBoardManager.BOARD_HEIGHT;
 import static utils.GameBoardManager.BOARD_WIDTH;
 
 public abstract class Entity implements Comparable<Entity> {
-    public static final byte BLACK = 0x0000;
-    public static final byte WHITE = 0x0001;
+    public static final byte BLACK = 0x0001;
+    public static final byte WHITE = 0x0000;
 
     protected static final byte LEFT = 0x0000;
     protected static final byte RIGHT = 0x0001;
@@ -168,7 +168,7 @@ public abstract class Entity implements Comparable<Entity> {
         }
     }
 
-    protected abstract int getRank();
+    public abstract int getRank();
 
     @Override
     public int compareTo(Entity o) {
