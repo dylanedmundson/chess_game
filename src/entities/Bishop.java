@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
+/**
+ * @see Entity
+ */
 public class Bishop extends Entity{
     public Bishop(byte color, GameBoardManager gbm) {
         super(color, gbm);

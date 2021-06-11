@@ -146,4 +146,11 @@ public class TakenPiecesGUI {
             return null;
         }
     }
+
+    public void reset() {
+        player1Takes = new Entity[MAX_PIECES];
+        player2Takes = new Entity[MAX_PIECES];
+        player1TakeIndex = 0;
+        player2TakeIndex = 0;
+    }
 }

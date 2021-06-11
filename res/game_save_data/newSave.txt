@@ -1,12 +1,12 @@
-1
+0
 entities.Rook=1,entities.Knight=1,entities.Bishop=1,entities.Queen=1,entities.King=1,entities.Bishop=1,entities.Knight=1,entities.Rook=1
 entities.Pawn=1=true,entities.Pawn=1=true,entities.Pawn=1=true,entities.Pawn=1=true,entities.Pawn=1=true,n,n,entities.Pawn=1=true
-n,n,n,n,n,n,entities.Pawn=1=false,n
-n,n,n,n,entities.Pawn=0=false,entities.Pawn=1=false,n,entities.Queen=0
 n,n,n,n,n,n,n,n
-n,n,n,n,n,n,n,n
+n,n,n,n,n,entities.Pawn=1=false,entities.Pawn=1=false,n
+n,n,n,n,entities.Pawn=0=false,n,n,n
+n,n,n,entities.Bishop=0,n,n,n,n
 entities.Pawn=0=true,entities.Pawn=0=true,entities.Pawn=0=true,entities.Pawn=0=true,n,entities.Pawn=0=true,entities.Pawn=0=true,entities.Pawn=0=true
-entities.Rook=0,entities.Knight=0,entities.Bishop=0,n,entities.King=0,entities.Bishop=0,entities.Knight=0,entities.Rook=0
+entities.Rook=0,entities.Knight=0,entities.Bishop=0,entities.Queen=0,entities.King=0,n,entities.Knight=0,entities.Rook=0
 __EOF
 0
 

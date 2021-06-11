@@ -4,13 +4,15 @@ import entities.*;
 import gui.GameBoard;
 import gui.TakenPiecesGUI;
 import gui.ToolPanel;
-import sun.plugin2.util.ColorUtil;
 
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * a manager for handling the game state and all game entities
+ */
 public class GameBoardManager {
     public static final int BOARD_WIDTH = 8;
     public static final int BOARD_HEIGHT = 8;
@@ -43,6 +45,11 @@ public class GameBoardManager {
         playersTurn = PLAYER1;
     }
 
+    /**
+     * initializes row of royalty entities
+     * @param color team color (WHITE or BLACK)
+     * @return array of entities
+     */
     private Entity[] initRoyalty(byte color) {
         Entity[] royalty = new Entity[] {
                 new Rook(color, this),
@@ -57,6 +64,11 @@ public class GameBoardManager {
         return royalty;
     }
 
+    /**
+     * generates a row of pawns
+     * @param color team color (WHITE or BLACK)
+     * @return array of entites
+     */
     private Entity[] initPawnRow(byte color) {
         Entity[] pawns = new Entity[BOARD_WIDTH];
         for (int i = 0; i < 8; i++) {
@@ -65,6 +77,10 @@ public class GameBoardManager {
         return pawns;
     }
 
+    /**
+     * handles rendering of game pieces onto gameboard
+     * @param g graphics object that handles drawing
+     */
     public void render(Graphics g) {
         for (int row = 0; row < elements.length; row++) {
             for (int col = 0; col < elements[row].length; col++) {
@@ -85,6 +101,11 @@ public class GameBoardManager {
         }
     }
 
+    /**
+     * helper method for checking if lastMoves field contains a coordinate
+     * @param coord RowColCoord being compared
+     * @return true if lastMoves contains coord
+     */
     private boolean lastMovesContains(RowColCoord coord) {
         for(RowColCoord rc : lastMoves) {
             if (rc.equals(coord)) {
@@ -94,6 +115,9 @@ public class GameBoardManager {
         return false;
     }
 
+    /**
+     * updates the state of the board
+     */
     public void tick() {
         if (checkForCheck()) {
             if (isCheckMate()) {
@@ -105,6 +129,9 @@ public class GameBoardManager {
         }
     }
 
+    /**
+     * handles switching which players turn it is
+     */
     private void switchPlayer() {
         if (playersTurn == PLAYER1) {
             playersTurn = PLAYER2;
@@ -114,6 +141,11 @@ public class GameBoardManager {
         ((ToolPanel)gb.tools).nextInstruction();
     }
 
+    /**
+     * handles mouse input click processing and entity movement as well as handling special cases
+     * such as check and checkmate
+     * @return true if a move has been made, false if not (used for determining when to switch player turn
+     */
     private boolean handleClick() {
         if (isClicked) {
             long nextClickTime = System.currentTimeMillis();
@@ -171,10 +203,18 @@ public class GameBoardManager {
         return false;
     }
 
+    /**
+     * sets the game over scene when checkmate has occurred
+     */
     private void gameOver() {
         gb.gameOverScreen.setGameOver(playersTurn);
+        gb.addKeyListener(gb.gameOverScreen);
     }
 
+    /**
+     * checks to determine if checkmate has occurred
+     * @return true if it is checkmate
+     */
     private boolean isCheckMate() {
         for (int row = 0; row < BOARD_HEIGHT; row++) {
             for (int col = 0; col < BOARD_WIDTH; col++) {
@@ -193,6 +233,12 @@ public class GameBoardManager {
         return true;
     }
 
+    /**
+     * checks to see if a possible move will prevent check
+     * @param mv RowColCoord of possible move being checked
+     * @param click RowColCoord of piece clicked on
+     * @return true if this mv prevents check
+     */
     private boolean preventsCheck(RowColCoord mv, RowColCoord click) {
         Entity mvHolder = elements[mv.row][mv.col];
         Entity clickHolder = elements[click.row][click.col];
@@ -204,6 +250,10 @@ public class GameBoardManager {
         return val;
     }
 
+    /**
+     * checks to see if the player who's turn it is is in check
+     * @return true if current player is in check
+     */
     private boolean checkForCheck() {
         for (int row = 0; row < BOARD_HEIGHT; row++) {
             for (int col = 0; col < BOARD_WIDTH; col++) {
@@ -239,6 +289,11 @@ public class GameBoardManager {
         return false;
     }
 
+    /**
+     * cheks to see if piece at rowColCoord belongs to the player who's turn it currently is
+     * @param rowColCoord RowColCoord of piece clicked on
+     * @return true if entity at rowColCoord belongs to current player
+     */
     private boolean isPlayerPiece(RowColCoord rowColCoord) {
         if (playersTurn == PLAYER1) {
             return elements[rowColCoord.row][rowColCoord.col].getColor() == Entity.WHITE;
@@ -247,16 +302,29 @@ public class GameBoardManager {
         }
     }
 
+    /**
+     * registers pressing of left mouse button
+     * @param x coordinate of mouse press
+     * @param y coordinate of mouse press
+     */
     public void press(int x, int y) {
         isClicked = true;
         xClick = x;
         yClick = y;
     }
 
+    /**
+     * registers releasing of left mouse button
+     */
     public void release() {
         isClicked = false;
     }
 
+    /**
+     * @param row of entity location
+     * @param col of entity location
+     * @return entity at row and col
+     */
     public Entity getEntityAt(int row, int col) {
         if (row < 0 || row >= GameBoardManager.BOARD_HEIGHT || col < 0 || col >= GameBoardManager.BOARD_WIDTH) {
             return null;
@@ -265,27 +333,44 @@ public class GameBoardManager {
         }
     }
 
+    /**
+     * @param rowColCoord RowColCoord of entity located in elements field
+     * @return entity at rowColCoord
+     */
     public Entity getEntityAt(RowColCoord rowColCoord) {
         return getEntityAt(rowColCoord.row, rowColCoord.col);
     }
 
+    /**
+     * loads saved game data into current gameboard manager
+     * @param elements elemnts loaded from save
+     * @param playersTurn players turn loaded from save
+     */
     public void loadGameData(Entity[][] elements, byte playersTurn) {
         this.elements = elements;
         this.playersTurn = playersTurn;
     }
 
-    public byte getPlayersTurn() {
-        return playersTurn;
-    }
-
+    /**
+     * setter for reference to GameBoard
+     * @param gb GameBoard reference
+     */
     public void setGameBoard(GameBoard gb) {
         this.gb = gb;
     }
 
+    /**
+     * setter for reference to TakenPiecesGUI
+     * @param takenPiecesGUI reference
+     */
     public void setTakenPiecesGUI(TakenPiecesGUI takenPiecesGUI) {
         this.takenPiecesGUI = takenPiecesGUI;
     }
 
+    /**
+     * serializes the GameBoardManagers data for saving game state
+     * @return String representation of GameBoardManager state
+     */
     public String serialize() {
         String results = "";
         results += playersTurn + "\n";
@@ -312,6 +397,10 @@ public class GameBoardManager {
         return results + "__EOF\n";
     }
 
+    /**
+     * deserializes game save data and loads into current GameBoardManager context
+     * @param input game save file scanner input
+     */
     public void deserialize(Scanner input) {
         Entity[][] entities = new Entity[GameBoardManager.BOARD_HEIGHT][GameBoardManager.BOARD_WIDTH];
         byte playersTurn = Byte.parseByte(input.nextLine());
@@ -341,6 +430,13 @@ public class GameBoardManager {
         loadGameData(entities, playersTurn);
     }
 
+    /**
+     * helper function for creating entity given name, color, and the GameBoardManager reference
+     * @param className name of entity class that is desired
+     * @param color desired color of entity
+     * @param gbm reference to entites GameBoardManager
+     * @return a new entity
+     */
     private Entity createEntity(String className, byte color, GameBoardManager gbm) {
         if (className.equals("entities.Rook")) {
             return new Rook(color, gbm);
@@ -357,5 +453,21 @@ public class GameBoardManager {
         } else {
             return null;
         }
+    }
+
+    public void reset() {
+        elements = new Entity[BOARD_HEIGHT][BOARD_WIDTH];
+        elements[0] = initRoyalty(Entity.BLACK);
+        elements[1] = initPawnRow(Entity.BLACK);
+        elements[6] = initPawnRow(Entity.WHITE);
+        elements[7] = initRoyalty(Entity.WHITE);
+
+        lastClickTime = System.currentTimeMillis();
+        playersTurn = PLAYER1;
+        lastMoves = null;
+        isHighlighted = new boolean[BOARD_WIDTH][BOARD_HEIGHT];
+        isClicked = false;
+        takenPiecesGUI.reset();
+        gb.removeKeyListener(this.gb.gameOverScreen);
     }
 }

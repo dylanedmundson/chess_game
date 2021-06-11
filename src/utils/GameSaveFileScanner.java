@@ -11,13 +11,17 @@ import java.lang.reflect.Field;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * handles saving and uploading game save data
+ */
 public class GameSaveFileScanner {
 
     private File inputFile;
 
     /**
-     *
+     * initializes GameSaveFileScanner and creates new file if path doesn't exist
      * @param path where we want to save the file
+     * @throws IllegalAccessException is path has extension other than .txt
      */
     public GameSaveFileScanner(String path) {
         if (!path.endsWith(".txt")) {
@@ -36,6 +40,8 @@ public class GameSaveFileScanner {
 
     /**
      * reads data into a Game board manager
+     * @param gbm GameBoardManager that data is read to
+     * @param tpgui TakenPiecesGUI that data is read to
      */
     public void readInData(GameBoardManager gbm, TakenPiecesGUI tpgui) {
         try {
@@ -50,6 +56,7 @@ public class GameSaveFileScanner {
     /**
      * writes data to save file
      * @param gbm GameBoardManage whos state is being saved
+     * @param tpgui TakenPiecesGUI whos state is being saved
      */
     public void writeGameData(GameBoardManager gbm, TakenPiecesGUI tpgui) {
         try {
@@ -61,6 +68,10 @@ public class GameSaveFileScanner {
         }
     }
 
+    /**
+     * deletes this instances input file
+     * @return true if file deletion successful
+     */
     public boolean deleteFile() {
         return this.inputFile.delete();
     }
@@ -74,6 +85,9 @@ public class GameSaveFileScanner {
     private static final Random RAND = new Random();
     private static final int ITERATIONS = 10000;
 
+    /**
+     * driver that handles running and configuring tests
+     */
     public static void main(String[] args) {
         System.out.println("Initiating Tests:");
         System.out.print("Testing ");
@@ -92,6 +106,10 @@ public class GameSaveFileScanner {
         System.out.println("\nAll tests passed");
     }
 
+    /**
+     * tests functionality of constructor working properly
+     * @return PASS is all tests passed else FAIL
+     */
     public static int testConstructor() {
         try {
             GameSaveFileScanner s = new GameSaveFileScanner("res/white_rook.png");
@@ -127,6 +145,10 @@ public class GameSaveFileScanner {
     //TODO: write more specific test for test case tpgui no entries for player1Takes but entries
     // for player2Takes broke int deserialize array out of bounds expception
 
+    /**
+     * tests that reading and writing functionality work properly
+     * @return PASS if all tests passed else FAIL
+     */
     public static int testReadAndWrite() {
         //alterations to gbm
         try {
@@ -200,6 +222,12 @@ public class GameSaveFileScanner {
         return PASS;
     }
 
+    /**
+     * helper method for testing GameBoardManagerFields after uploading save data
+     * @param gbm1 GameBoardManager whos data was saved
+     * @param gbm2 GameBoardManager whos data was loaded from gbm1
+     * @return PASS if all tests passed else FAIL
+     */
     private static int testGameBoardManagerFields(GameBoardManager gbm1, GameBoardManager gbm2) {
         // check player turn is correct
         try {
@@ -260,6 +288,12 @@ public class GameSaveFileScanner {
         return PASS;
     }
 
+    /**
+     * helper method for testing TakenPiecesGUI after uploading save data
+     * @param takenPiecesGUI TakenPiecesGUI whos data was originally saved
+     * @param takenPiecesGUI2 TakenPiecesGUI whos data was uploaded from takePiecesGUI's saved data
+     * @return PASS if all tests passed else FAIL
+     */
     public static int testTakenPiecesGUIFields(TakenPiecesGUI takenPiecesGUI, TakenPiecesGUI takenPiecesGUI2) {
         //test for player take index
         try {

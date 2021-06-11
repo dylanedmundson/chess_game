@@ -16,6 +16,7 @@ public class ToolPanel extends JPanel {
     private JButton saveButton;
     private String instructionString;
     private JButton loadButton;
+    private JButton resetButton;
 
     private final int STR_LEN = 79;
     private final String[] INSTRUCTIONS = new String[]{"Player 1 Make Your Move", "Player 2 Make Your Move"};
@@ -47,9 +48,23 @@ public class ToolPanel extends JPanel {
             }
         });
 
+        resetButton = new JButton("Reset");
+        resetButton.setFont(LABEL_FONT);
+
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gb.gameBoardManager.reset();
+                instructionString = INSTRUCTIONS[0];
+                centerInstructionLabel();
+                instructionLabel.setText(instructionString);
+            }
+        });
+
         setLayout(new FlowLayout());
         add(saveButton);
         add(loadButton);
+        add(resetButton);
         add(instructionLabel);
         setBackground(GameBoard.BACKGROUND);
     }

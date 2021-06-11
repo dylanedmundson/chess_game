@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
+/**
+ * GameBoard is the "control center" for chess board operations and handles rendering
+ */
 public class GameBoard extends JPanel implements ActionListener {
     public static final int ANIMATION_DELAY = 10;
     private final String TITLE = "Chess v.1.0";
@@ -46,6 +49,9 @@ public class GameBoard extends JPanel implements ActionListener {
         gameOverScreen = new GameOverScreen(image);
     }
 
+    /**
+     * initializes game board field and componenets
+     */
     public void init() {
         frame = new JFrame();
         frame.setLayout(new BorderLayout());
@@ -66,6 +72,10 @@ public class GameBoard extends JPanel implements ActionListener {
         frame.setVisible(true);
     }
 
+    /**
+     * prints current components to Game Board
+     * @param g graphics object that handles rendering
+     */
     @Override
     public void paintComponents(Graphics g) {
         //draw background color
@@ -104,6 +114,10 @@ public class GameBoard extends JPanel implements ActionListener {
         takenPiecesGUI.render(g);
     }
 
+    /**
+     * handles painting of gameboard's screen
+     * @param g graphics object that handles rendering
+     */
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -115,13 +129,23 @@ public class GameBoard extends JPanel implements ActionListener {
 
     }
 
+    /**
+     * handles timing for updating gameboard screen
+     * @param e event (not used here)
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (gameOverScreen.isGameOver()) {
+            gameOverScreen.update();
+        }
         gameBoardManager.tick();
         repaint();
     }
 
 
+    /**
+     * A 2 player pvp chess game, capable of saving current game and loading last save.
+     */
     public static void main(String[] args) {
         new GameBoard().init();
     }

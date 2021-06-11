@@ -9,6 +9,9 @@ import java.util.LinkedList;
 import static utils.GameBoardManager.BOARD_HEIGHT;
 import static utils.GameBoardManager.BOARD_WIDTH;
 
+/**
+ * GameObject that holds state of each piece and specialized functionality of piece type
+ */
 public abstract class Entity implements Comparable<Entity> {
     public static final byte BLACK = 0x0001;
     public static final byte WHITE = 0x0000;
@@ -34,6 +37,11 @@ public abstract class Entity implements Comparable<Entity> {
     protected byte color;
     protected GameBoardManager gbm;
 
+    /**
+     * initializes entity with given color and GameBoardManager reference
+     * @param color of entity WHITE or BLACK
+     * @param gbm reference to GamgeBoardManager
+     */
     public Entity(byte color, GameBoardManager gbm) {
         if (color != BLACK && color != WHITE) {
             throw new IllegalArgumentException("color must be black (0) or white (1)");
@@ -44,17 +52,9 @@ public abstract class Entity implements Comparable<Entity> {
         loadImg();
     }
 
-    public void collision(Entity other) {
-        other.kill();
-    }
-    public void kill() {
-        isAlive = false;
-    }
-
-    public boolean getIsAlive() {
-        return isAlive;
-    }
-
+    /**
+     * @return entities image
+     */
     public BufferedImage getImage() { return image; }
 
     public byte getColor() {
@@ -62,12 +62,28 @@ public abstract class Entity implements Comparable<Entity> {
     }
 
     /**
-     * cartesian coordinate system, up is -y down is +y left -x right +x, move one space = 1
+     * gets possible moves for pieces
+     * @param curCoord the current position of the entity
+     * @return list of RowColCoord's of possible moves
      */
     public abstract LinkedList<RowColCoord> getPotMoves(RowColCoord curCoord);
+
+    /**
+     * handles any state changes when a move is made
+     */
     public abstract void move();
+
+    /**
+     * loads the image of the entity
+     */
     public abstract void loadImg();
 
+    /**
+     * a helper method used for generating straight and diagonal moves
+     * @param moves list of moves, that generated moves will be added to
+     * @param curCoord entity's current RowColCoord
+     * @param dir direction of movement (UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT)
+     */
     protected void addMovesHelper(LinkedList<RowColCoord> moves, RowColCoord curCoord, byte dir) {
 
         if (dir == UP) {
@@ -168,6 +184,9 @@ public abstract class Entity implements Comparable<Entity> {
         }
     }
 
+    /**
+     * @return rank associated with entity (for sorting in TakenPiecesGUI)
+     */
     public abstract int getRank();
 
     @Override
