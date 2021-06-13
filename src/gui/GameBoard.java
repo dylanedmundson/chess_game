@@ -1,11 +1,11 @@
 package gui;
 
 import utils.GameBoardManager;
-//TODO: sometimes get white screen when starting up game
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
 /**
@@ -47,6 +47,7 @@ public class GameBoard extends JPanel implements ActionListener {
         gameBoardManager.setTakenPiecesGUI(takenPiecesGUI);
         inputAdapter = new InputAdapater(gameBoardManager);
         gameOverScreen = new GameOverScreen(image);
+        gameOverScreen.setGameBoard(this);
     }
 
     /**
@@ -67,8 +68,11 @@ public class GameBoard extends JPanel implements ActionListener {
 
         timer = new Timer(ANIMATION_DELAY, this);
         timer.start();
+        addKeyListener(inputAdapter);
         addMouseListener(inputAdapter);
+        setFocusable(true);
         frame.add(this);
+
         frame.setVisible(true);
     }
 
@@ -124,6 +128,9 @@ public class GameBoard extends JPanel implements ActionListener {
         paintComponents(dbg);
         if (gameOverScreen.isGameOver()) {
             gameOverScreen.render();
+            if (KeyInput.up.isPressed()) {
+                System.out.println("up");
+            }
         }
         g.drawImage(image, 0, 0,null);
 
@@ -136,6 +143,8 @@ public class GameBoard extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (gameOverScreen.isGameOver()) {
+            ((ToolPanel)this.tools).disableButtonListeners();
+            requestFocus();
             gameOverScreen.update();
         }
         gameBoardManager.tick();
@@ -148,5 +157,14 @@ public class GameBoard extends JPanel implements ActionListener {
      */
     public static void main(String[] args) {
         new GameBoard().init();
+    }
+
+    public void reset() {
+        ((ToolPanel)this.tools).reset();
+        ((ToolPanel)this.tools).EnableButtonListeners();
+    }
+
+    public void exit() {
+        this.frame.dispatchEvent(new WindowEvent(this.frame, WindowEvent.WINDOW_CLOSING));
     }
 }

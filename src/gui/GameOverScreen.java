@@ -3,12 +3,12 @@ package gui;
 import utils.GameBoardManager;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
-public class GameOverScreen implements KeyListener {
+public class GameOverScreen {
+    private final int DEBOUNCE = 200;
+    private final int NUM_CHOICES = 1;
     private BufferedImage image;
     private int[] pixels;
     private int width;
@@ -19,9 +19,17 @@ public class GameOverScreen implements KeyListener {
     private int blinkCount;
     private boolean isShowing = true;
     private int choiceIndex = 0;
+    private long lastPressTime = 0;
+    private GameBoard gb;
+
+
 
     public GameOverScreen(BufferedImage image) {
         this.image = image;
+    }
+
+    public void setGameBoard(GameBoard gb) {
+        this.gb = gb;
     }
 
     public void render() {
@@ -43,20 +51,12 @@ public class GameOverScreen implements KeyListener {
             g.drawString("Game Over!", 450, 400);
             g.drawString("Player 1 Wins", 450, 450);
         }
-        if (isShowing && choiceIndex == 0) {
-            g.setColor(Color.WHITE);
-            g.drawString(">", 400, 500);
-            g.drawString("reset", 450, 500);
-            g.drawString("exit", 450, 550);
-        } else if (isShowing && choiceIndex == 1) {
-            g.setColor(Color.WHITE);
-            g.drawString(">", 400, 550);
-            g.drawString("reset", 450, 500);
-            g.drawString("exit", 450, 550);
-        } else {
-            g.setColor(Color.WHITE);
-            g.drawString("reset", 450, 500);
-            g.drawString("exit", 450, 550);
+        g.setColor(Color.WHITE);
+        g.drawString("reset", 450, 500);
+        g.drawString("exit", 450, 550);
+        if (isShowing) {
+            g.drawString(">", 400, 500 + (50 * this.choiceIndex));
+
         }
         int[] overlayPix = ((DataBufferInt)overlay.getRaster().getDataBuffer()).getData();
         for (int i = 0; i < overlayPix.length; i++) {
@@ -84,31 +84,36 @@ public class GameOverScreen implements KeyListener {
     public void update() {
         blinkCount++;
         if (blinkCount % 20 == 0) isShowing = !isShowing;
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            this.choiceIndex++;
-            if (choiceIndex > 1) {
+        long currPressTime = System.currentTimeMillis();
+        if (InputAdapater.DOWN_KEY.isPressed() && currPressTime - lastPressTime > DEBOUNCE) {
+            choiceIndex++;
+            if (choiceIndex > NUM_CHOICES) {
                 choiceIndex = 0;
             }
-            System.out.println("typed");
-        }
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-            this.choiceIndex--;
+            lastPressTime = currPressTime;
+        } else if (InputAdapater.UP_KEY.isPressed() && currPressTime - lastPressTime > DEBOUNCE) {
+            choiceIndex--;
             if (choiceIndex < 0) {
-                choiceIndex = 1;
+                choiceIndex = NUM_CHOICES;
+            }
+            System.out.println("up");
+            lastPressTime = currPressTime;
+        } else if (InputAdapater.CONFIRM_KEY.isPressed() && currPressTime - lastPressTime > DEBOUNCE) {
+            if (choiceIndex == 0) {
+                //reset
+                this.gb.reset();
+            } else {
+                //exit
+                this.gb.exit();
             }
         }
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-
+    public void reset() {
+        blinkCount = 0;
+        isShowing = true;
+        choiceIndex = 0;
+        isGameOver = false;
+        lastPressTime = 0;
     }
 }

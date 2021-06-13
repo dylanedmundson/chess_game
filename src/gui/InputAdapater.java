@@ -1,12 +1,13 @@
 package gui;
 
-import com.sun.corba.se.spi.orbutil.fsm.Input;
 import utils.GameBoardManager;
 
 import javax.swing.event.MouseInputListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 
-public class InputAdapater implements MouseInputListener {
+public class InputAdapater implements MouseInputListener, KeyListener {
     public MouseClickHelper mouseClickHelper;
     private GameBoardManager gm;
 
@@ -75,5 +76,46 @@ public class InputAdapater implements MouseInputListener {
     @Override
     public void mouseMoved(MouseEvent e) {
 
+    }
+
+    public static Key UP_KEY = new Key();
+    public static Key DOWN_KEY = new Key();
+    public static Key CONFIRM_KEY = new Key();
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        toggle(e.getKeyCode(), true);
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        toggle(e.getKeyCode(), false);
+    }
+
+
+    public void toggle(int event, boolean isPressed) {
+        if (event == KeyEvent.VK_UP || event == KeyEvent.VK_W) {
+            UP_KEY.toggle(isPressed);
+        } else if (event == KeyEvent.VK_DOWN || event == KeyEvent.VK_S) {
+            DOWN_KEY.toggle(isPressed);
+        } else if (event == KeyEvent.VK_ENTER || event == KeyEvent.VK_SPACE) {
+            CONFIRM_KEY.toggle(isPressed);
+        }
+    }
+
+    public static class Key {
+        private boolean isPressed = false;
+        public void toggle(boolean isPressed) {
+            this.isPressed = isPressed;
+        }
+
+        public boolean isPressed() {
+            return isPressed;
+        }
     }
 }

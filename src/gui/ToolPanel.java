@@ -1,5 +1,6 @@
 package gui;
 
+import utils.GameBoardManager;
 import utils.GameSaveFileScanner;
 
 import javax.swing.*;
@@ -21,8 +22,10 @@ public class ToolPanel extends JPanel {
     private final int STR_LEN = 79;
     private final String[] INSTRUCTIONS = new String[]{"Player 1 Make Your Move", "Player 2 Make Your Move"};
     private int currInstructionIndex = 0;
+    private GameBoard gb;
 
     public ToolPanel(GameBoard gb) {
+        this.gb = gb;
         instructionString = INSTRUCTIONS[currInstructionIndex];
         centerInstructionLabel();
         instructionLabel = new JLabel(instructionString);
@@ -54,10 +57,7 @@ public class ToolPanel extends JPanel {
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gb.gameBoardManager.reset();
-                instructionString = INSTRUCTIONS[0];
-                centerInstructionLabel();
-                instructionLabel.setText(instructionString);
+                reset();
             }
         });
 
@@ -87,4 +87,31 @@ public class ToolPanel extends JPanel {
         instructionLabel.setText(instructionString);
     }
 
+    public void reset() {
+        this.gb.gameBoardManager.reset();
+        instructionString = INSTRUCTIONS[0];
+        currInstructionIndex = 0;
+        centerInstructionLabel();
+        instructionLabel.setText(instructionString);
+    }
+
+    public void disableButtonListeners() {
+        saveButton.setEnabled(false);
+        loadButton.setEnabled(false);
+        resetButton.setEnabled(false);
+    }
+
+    public void EnableButtonListeners() {
+        saveButton.setEnabled(true);
+        loadButton.setEnabled(true);
+        resetButton.setEnabled(true);
+    }
+
+    public void setPlayerTurn(byte playersTurn) {
+            instructionString = INSTRUCTIONS[playersTurn];
+            currInstructionIndex = playersTurn;
+            centerInstructionLabel();
+            instructionLabel.setText(instructionString);
+
+    }
 }

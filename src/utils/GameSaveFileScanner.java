@@ -142,8 +142,6 @@ public class GameSaveFileScanner {
         }
         return PASS;
     }
-    //TODO: write more specific test for test case tpgui no entries for player1Takes but entries
-    // for player2Takes broke int deserialize array out of bounds expception
 
     /**
      * tests that reading and writing functionality work properly

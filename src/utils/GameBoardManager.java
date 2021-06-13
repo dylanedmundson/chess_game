@@ -162,6 +162,13 @@ public class GameBoardManager {
                     elements[rowColCoord.row][rowColCoord.col] = elements[lasClickCoord.row][lasClickCoord.col];
                     elements[lasClickCoord.row][lasClickCoord.col] = null;
                     elements[rowColCoord.row][rowColCoord.col].move();
+                    if (elements[rowColCoord.row][rowColCoord.col].getRank() == Entity.PAWN_RANK &&
+                        atEndOfBoard(rowColCoord, elements[rowColCoord.row][rowColCoord.col].getColor())) {
+                        elements[rowColCoord.row][rowColCoord.col] = new Queen(
+                                elements[rowColCoord.row][rowColCoord.col].getColor(),
+                                this);
+                        //TODO: impelemnt method for adding popup menu
+                    }
                     lasClickCoord = rowColCoord;
                     for (RowColCoord rc : lastMoves) {
                         isHighlighted[rc.row][rc.col] = false;
@@ -175,7 +182,7 @@ public class GameBoardManager {
                 if (rowColCoord != null && elements[rowColCoord.row][rowColCoord.col] != null &&
                         isPlayerPiece(rowColCoord)) {
                     if (lasClickCoord != null) {
-                        if (!lasClickCoord.equals(rowColCoord)) {
+                        if (!lasClickCoord.equals(rowColCoord) && lastMoves != null) {
                             for (RowColCoord rc : lastMoves) {
                                 isHighlighted[rc.row][rc.col] = false;
                             }
@@ -203,12 +210,19 @@ public class GameBoardManager {
         return false;
     }
 
+    private boolean atEndOfBoard(RowColCoord rowColCoord, byte color) {
+        if (color == Entity.WHITE) {
+            return rowColCoord.row == 0;
+        } else {
+            return rowColCoord.row == 7;
+        }
+    }
+
     /**
      * sets the game over scene when checkmate has occurred
      */
     private void gameOver() {
         gb.gameOverScreen.setGameOver(playersTurn);
-        gb.addKeyListener(gb.gameOverScreen);
     }
 
     /**
@@ -349,6 +363,7 @@ public class GameBoardManager {
     public void loadGameData(Entity[][] elements, byte playersTurn) {
         this.elements = elements;
         this.playersTurn = playersTurn;
+        ((ToolPanel) this.gb.tools).setPlayerTurn(this.playersTurn);
     }
 
     /**
@@ -402,6 +417,7 @@ public class GameBoardManager {
      * @param input game save file scanner input
      */
     public void deserialize(Scanner input) {
+        reset();
         Entity[][] entities = new Entity[GameBoardManager.BOARD_HEIGHT][GameBoardManager.BOARD_WIDTH];
         byte playersTurn = Byte.parseByte(input.nextLine());
         int row = 0;
@@ -468,6 +484,6 @@ public class GameBoardManager {
         isHighlighted = new boolean[BOARD_WIDTH][BOARD_HEIGHT];
         isClicked = false;
         takenPiecesGUI.reset();
-        gb.removeKeyListener(this.gb.gameOverScreen);
+        gb.gameOverScreen.reset();
     }
 }
